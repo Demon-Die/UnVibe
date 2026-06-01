@@ -1,0 +1,39 @@
+{
+  "name": "api",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "db:migrate": "prisma migrate dev",
+    "db:seed": "prisma db seed",
+    "db:generate": "prisma generate"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "@trpc/server": "^10.45.2",
+    "@trpc/client": "^10.45.2",
+    "@prisma/client": "^5.12.1",
+    "@auth/prisma-adapter": "^1.6.0",
+    "bullmq": "^5.7.0",
+    "socket.io": "^4.7.5",
+    "pino": "^8.20.0",
+    "pino-pretty": "^11.0.0",
+    "zod": "^3.22.4",
+    "@sentry/node": "^7.109.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "@unvibe/types": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5",
+    "@types/node": "^20.12.7",
+    "@types/express": "^4.17.21",
+    "@types/cors": "^2.8.17",
+    "prisma": "^5.12.1",
+    "tsx": "^4.7.2"
+  },
+  "prisma": {
+    "schema": "prisma/schema.prisma"
+  }
+}
