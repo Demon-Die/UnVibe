@@ -1,7 +1,10 @@
+"use client";
+
 import Link from "next/link";
 import { ArrowRight, Code2, GitBranch, Radar, ShieldQuestion, Swords } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { ThemeController } from "@/components/app/theme-controller";
 
 const signals = [
   { label: "Decode", value: "annotate code intent", icon: Code2 },
@@ -17,9 +20,8 @@ const featureCards = [
 
 export default function LandingPage() {
   return (
-    <main className="min-h-screen overflow-hidden bg-background text-foreground">
+    <main className="min-h-screen overflow-hidden text-foreground">
       <section className="surface-grid relative min-h-screen border-b border-border">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_20%,hsl(var(--primary)/0.20),transparent_32%),linear-gradient(180deg,hsl(var(--background)/0.15),hsl(var(--background))_72%)]" />
         <nav className="relative mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
           <Link href="/" className="flex items-center gap-3">
             <span className="flex h-9 w-9 items-center justify-center rounded-md border border-primary/40 bg-primary/15 font-mono text-sm font-semibold text-primary">
@@ -28,6 +30,7 @@ export default function LandingPage() {
             <span className="font-semibold tracking-tight">UnVibe</span>
           </Link>
           <div className="flex items-center gap-3">
+            <ThemeController />
             <Link href="/auth/signin" className="hidden text-sm text-muted-foreground transition hover:text-foreground sm:inline">
               Sign in
             </Link>
@@ -40,7 +43,7 @@ export default function LandingPage() {
           </div>
         </nav>
 
-        <div className="relative mx-auto grid max-w-7xl gap-10 px-6 pb-14 pt-12 lg:grid-cols-[1fr_520px] lg:items-center lg:pt-20">
+        <div className="relative mx-auto grid max-w-7xl gap-10 px-6 pb-4 pt-8 lg:grid-cols-[1fr_520px] lg:items-center lg:pt-14">
           <div>
             <Badge variant="outline" className="mb-6 border-primary/40 bg-primary/10 text-primary">
               AI learning loop for builders
@@ -98,19 +101,19 @@ export default function LandingPage() {
             </div>
           </div>
         </div>
-      </section>
 
-      <section className="mx-auto grid max-w-7xl gap-4 px-6 py-12 md:grid-cols-3">
-        {featureCards.map((feature) => {
-          const Icon = feature.icon;
-          return (
-          <div key={feature.title} className="rounded-lg border border-border bg-card p-5">
-            <Icon className="mb-5 h-5 w-5 text-primary" />
-            <h3 className="font-semibold">{feature.title}</h3>
-            <p className="mt-2 text-sm leading-6 text-muted-foreground">{feature.copy}</p>
-          </div>
-          );
-        })}
+        <div className="mx-auto mt-6 grid w-full max-w-7xl gap-4 px-6 pb-6 md:grid-cols-3">
+          {featureCards.map((feature) => {
+            const Icon = feature.icon;
+            return (
+            <div key={feature.title} className="rounded-lg border border-border bg-card p-5">
+              <Icon className="mb-5 h-5 w-5 text-primary" />
+              <h3 className="font-semibold">{feature.title}</h3>
+              <p className="mt-2 text-sm leading-6 text-muted-foreground">{feature.copy}</p>
+            </div>
+            );
+          })}
+        </div>
       </section>
     </main>
   );

@@ -21,7 +21,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const { user, signOut } = useAuthStore();
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen text-foreground">
       <aside className="fixed inset-y-0 left-0 z-20 hidden w-64 border-r border-border bg-card/80 backdrop-blur lg:block">
         <div className="flex h-16 items-center gap-3 border-b border-border px-5">
           <span className="flex h-9 w-9 items-center justify-center rounded-md bg-primary/15 font-mono text-sm font-semibold text-primary">
