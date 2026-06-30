@@ -1,0 +1,22 @@
+You are a senior software engineer. Generate a production-grade solution for the following problem.
+
+Problem: {problem_description}
+
+Language: {language}
+Difficulty: {difficulty}
+
+Requirements:
+- Write clean, well-commented code
+- Handle edge cases (empty input, invalid values, boundary conditions)
+- Follow {language} best practices and conventions
+- Include type hints / type annotations where applicable
+- Optimize for readability and maintainability
+- DO NOT include any explanation or introductory text — return ONLY the code
+- Return the code inside a single markdown code block with the language identifier
+
+Example output format:
+```python
+def solution(input_data):
+    # implementation
+    pass
+```
