@@ -55,11 +55,14 @@
 |------------|---------|----------------|----------|
 | fastapi | >=0.110.0 | Web framework for AI endpoints | `apps/ai-service/requirements.txt` |
 | uvicorn | >=0.28.0 | ASGI server | `apps/ai-service/requirements.txt` |
-| anthropic | >=0.21.0 | Anthropic Claude API client (NOT YET USED — commented out) | `apps/ai-service/requirements.txt`, `routes/generate.py` |
-| httpx | >=0.27.0 | Async HTTP client | `apps/ai-service/requirements.txt` |
+| openai | >=1.0.0 | OpenAI SDK used as OpenRouter client (pointed at OpenRouter base URL) | `apps/ai-service/requirements.txt`, `apps/ai-service/app/services/llm_client.py` |
+| httpx | >=0.27.0 | Async HTTP client (required by FastAPI test client) | `apps/ai-service/requirements.txt` |
 | pydantic | >=2.6.4 | Request/response validation | `apps/ai-service/requirements.txt` |
 | python-dotenv | >=1.0.1 | Environment variable loading | `apps/ai-service/requirements.txt` |
 | loguru | >=0.7.2 | Logging | `apps/ai-service/requirements.txt` |
+| anyio | >=4.3.0 | Async runtime bridge (used by `generate_async()`) | `apps/ai-service/requirements.txt` |
+| pytest | >=8.0.0 | Test framework | `apps/ai-service/requirements.txt` |
+| pytest-asyncio | >=0.23.0 | Async test support | `apps/ai-service/requirements.txt` |
 
 #### Infrastructure
 
@@ -67,7 +70,7 @@
 |------|---------|------|----------|
 | PostgreSQL | 16-alpine | Primary database | `infra/docker-compose.yml` |
 | Redis | 7-alpine | Cache + BullMQ queue + Socket.io pub/sub | `infra/docker-compose.yml` |
-| Cloudflare R2 | — | Object storage (code snapshots, PDF reports) | `.env.example` |
+| Cloudflare R2 | — | Object storage (code snapshots, PDF reports — planned) | `.env.example` |
 | Turborepo | ^2.0.0 | Monorepo orchestration | `package.json`, `turbo.json` |
 
 ### 3) Development Toolchain
@@ -80,6 +83,8 @@
 | PostCSS + Tailwind CSS | CSS processing + utility classes | `apps/web/postcss.config.mjs` |
 | Prisma ^5.12.1 | Schema management + migrations | `apps/api/prisma/schema.prisma` |
 | tsx ^4.7.2 | TypeScript execution for API | `apps/api/package.json` |
+| Jest + ts-jest | TypeScript testing (API) | `apps/api/jest.config.ts` |
+| pytest ^8 + pytest-asyncio | Python testing (AI service) | `apps/ai-service/requirements.txt` |
 | Turborepo ^2.0.0 | Task orchestration across workspaces | `turbo.json` |
 
 ### 4) Key Commands
@@ -89,9 +94,16 @@ pnpm install              # Install all workspace dependencies
 pnpm dev                  # Start all apps (Turborepo parallel)
 pnpm build                # Build all apps
 pnpm lint                 # Lint all workspaces
-pnpm test                 # Run all tests
-pnpm db:migrate           # Run database migrations
-pnpm db:seed              # Seed the database
+pnpm test                 # Run all workspace tests
+
+# Python AI service (run from apps/ai-service/)
+pip install -r requirements.txt     # Install Python deps
+uvicorn app.main:app --reload       # Start AI service on port 8000
+pytest tests/ -v                    # Run Python tests (28 tests)
+
+# TypeScript API tests
+pnpm --filter api test              # Run Jest tests (12 tests)
+
 pnpm --filter web dev     # Frontend only (localhost:3000)
 pnpm --filter api dev     # API only (localhost:4000)
 ```
@@ -99,8 +111,8 @@ pnpm --filter api dev     # API only (localhost:4000)
 ### 5) Environment and Config
 
 - Config sources: `.env` (root of repo), loaded by each app independently
-- Required env vars: `DATABASE_URL`, `REDIS_URL`, `ANTHROPIC_API_KEY`, `NEXTAUTH_SECRET`
-- Optional env vars: `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET_NAME`, `RESEND_API_KEY`, `SENTRY_DSN_WEB`, `SENTRY_DSN_API`, `NEXT_PUBLIC_POSTHOG_KEY`
+- Required env vars: `DATABASE_URL`, `REDIS_URL`, `OPENROUTER_API_KEY`, `NEXTAUTH_SECRET`
+- Optional env vars: `LLM_MODEL` (default: `google/gemini-2.0-flash-001`), `LLM_MAX_TOKENS` (default: 4096), `AI_SERVICE_PORT` (default: 8000), `OPENROUTER_BASE_URL`, `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET_NAME`, `RESEND_API_KEY`, `SENTRY_DSN_WEB`, `SENTRY_DSN_API`, `NEXT_PUBLIC_POSTHOG_KEY`
 - Deployment/runtime constraints: Vercel (frontend), Railway or Render (backend), Docker Compose for local dev
 
 ### 6) Evidence
