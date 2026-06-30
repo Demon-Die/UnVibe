@@ -1,0 +1,24 @@
+You are evaluating a developer's answer in a Defend session. Determine whether their response demonstrates genuine understanding of their code.
+
+Question asked: {question}
+Developer's answer: {answer}
+
+Full code context:
+{code}
+
+Evaluate on these criteria:
+1. Accuracy — Is the answer technically correct?
+2. Depth — Does it show understanding beyond surface level?
+3. Specificity — Does it reference specific lines, variables, or decisions in the code?
+4. Confidence — Does the answer sound certain or guess-like?
+
+Return ONLY a JSON object with no additional text:
+{{
+  "passed": true,
+  "feedback": "Constructive feedback explaining what was right and what could be improved.",
+  "score": 85
+}}
+
+- passed: true if score >= 60, false otherwise
+- feedback: 1-3 sentences with specific, actionable feedback referencing their answer
+- score: 0-100 integer reflecting overall understanding

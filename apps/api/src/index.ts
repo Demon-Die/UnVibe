@@ -6,8 +6,10 @@ import { Server } from 'socket.io';
 import pino from 'pino';
 import * as Sentry from '@sentry/node';
 import { PrismaClient } from '@prisma/client';
-import { Queue, Worker } from 'bullmq';
+import { Queue } from 'bullmq';
+import net from 'net';
 import { router, publicProcedure } from './trpc';
+import { createSubmissionWorker } from './services/submission-worker';
 import dotenv from 'dotenv';
 
 dotenv.config({ path: '../../.env' });
@@ -32,28 +34,78 @@ if (process.env.SENTRY_DSN_API) {
 // Initialize Prisma
 const prisma = new PrismaClient();
 
-// Initialize BullMQ (Create a dummy queue for scaffolding check)
+// ---------------------------------------------------------------------------
+// Redis / BullMQ setup (resilient — works without Redis running)
+// ---------------------------------------------------------------------------
+
 const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
 const connectionOpts = {
   host: redisUrl.split('://')[1]?.split(':')[0] || 'localhost',
   port: parseInt(redisUrl.split(':')[2]) || 6379,
 };
 
-const submissionQueue = new Queue('submissions', {
-  connection: connectionOpts,
-});
+/**
+ * Quick TCP connectivity check — avoids BullMQ's infinite retry spam when
+ * Redis is not available (e.g. Docker not running).
+ */
+function checkRedisReachable(host: string, port: number, timeoutMs = 2000): Promise<boolean> {
+  return new Promise((resolve) => {
+    const socket = new net.Socket();
+    socket.setTimeout(timeoutMs);
+    socket.on('connect', () => {
+      socket.destroy();
+      resolve(true);
+    });
+    socket.on('error', () => {
+      socket.destroy();
+      resolve(false);
+    });
+    socket.on('timeout', () => {
+      socket.destroy();
+      resolve(false);
+    });
+    socket.connect(port, host);
+  });
+}
 
-const submissionWorker = new Worker(
-  'submissions',
-  async (job) => {
-    logger.info({ jobId: job.id }, 'Processing submission job');
-    return { processed: true };
-  },
-  { connection: connectionOpts }
-);
+let submissionQueue: Queue | null = null;
+// declared here for scope; assigned inside initRedisDeps
+let submissionWorker: ReturnType<typeof createSubmissionWorker> | null = null;
 
-submissionWorker.on('error', (err) => {
-  logger.error(err, 'Submission worker error');
+async function initRedisDeps(): Promise<void> {
+  const available = await checkRedisReachable(connectionOpts.host, connectionOpts.port);
+
+  if (!available) {
+    logger.warn(
+      'Redis unavailable — job queue and submission worker disabled. ' +
+        'Start Docker with: docker compose -f infra/docker-compose.yml up -d',
+    );
+    return;
+  }
+
+  try {
+    submissionQueue = new Queue('submissions', {
+      connection: connectionOpts,
+    });
+    await submissionQueue.waitUntilReady();
+
+    submissionWorker = createSubmissionWorker(prisma, connectionOpts);
+
+    logger.info('Redis connected — job queue and submission worker enabled');
+  } catch (err) {
+    logger.warn(
+      { err },
+      'Failed to initialize BullMQ — job queue and submission worker disabled. ' +
+        'Start Docker with: docker compose -f infra/docker-compose.yml up -d',
+    );
+    submissionQueue = null;
+    submissionWorker = null;
+  }
+}
+
+// Fire-and-forget: server starts immediately even if Redis init is pending
+initRedisDeps().catch((err) => {
+  logger.error({ err }, 'Unexpected error during Redis initialization');
 });
 
 // tRPC router
