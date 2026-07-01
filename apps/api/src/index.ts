@@ -11,6 +11,9 @@ import net from "net";
 import { router, publicProcedure } from "./trpc";
 import { createContext } from "./context";
 import { createSubmissionWorker } from "./services/submission-worker";
+import { authRouter } from "./routers/auth";
+import { tracksRouter } from "./routers/tracks";
+import { warRoomRouter } from "./routers/warRoom";
 import dotenv from "dotenv";
 
 dotenv.config({ path: "../../.env" });
@@ -114,6 +117,9 @@ const appRouter = router({
   health: publicProcedure.query(() => {
     return { status: "ok", timestamp: new Date() };
   }),
+  auth: authRouter,
+  tracks: tracksRouter,
+  warRoom: warRoomRouter,
 });
 
 export type AppRouter = typeof appRouter;
