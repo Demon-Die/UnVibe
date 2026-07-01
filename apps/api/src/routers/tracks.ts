@@ -6,10 +6,14 @@ export const tracksRouter = router({
   getAll: publicProcedure.query(async ({ ctx }) => {
     const tracks = await ctx.prisma.track.findMany({
       where: { published: true },
-      include: { _count: { select: { modules: true } } },
+      include: { modules: { select: { id: true, title: true, order: true } } },
       orderBy: { title: "asc" },
     });
-    return tracks;
+    return tracks.map(({ modules, ...t }) => ({
+      ...t,
+      modules,
+      moduleCount: modules.length,
+    }));
   }),
 
   getById: publicProcedure
