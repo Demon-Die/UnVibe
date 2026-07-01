@@ -22,7 +22,12 @@ export function useTracksData() {
   return trpc.health.useQuery();
 }
 
-export function useModuleData(_trackId: string, _moduleId: string) {
+export function useModuleData(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _trackId: string,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _moduleId: string,
+) {
   // Placeholder — returns empty until modules router is built
   return trpc.health.useQuery();
 }
