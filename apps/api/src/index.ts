@@ -8,6 +8,7 @@ import * as Sentry from '@sentry/node';
 import { PrismaClient } from '@prisma/client';
 import { Queue, Worker } from 'bullmq';
 import { router, publicProcedure } from './trpc';
+import { createContext } from './context';
 import dotenv from 'dotenv';
 
 dotenv.config({ path: '../../.env' });
@@ -95,7 +96,7 @@ app.use(
   '/trpc',
   trpcExpress.createExpressMiddleware({
     router: appRouter,
-    createContext: () => ({ prisma, logger, io, submissionQueue }),
+    createContext: (opts) => createContext(opts, { prisma, logger, io, submissionQueue }),
   })
 );
 
