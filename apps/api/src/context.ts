@@ -25,6 +25,7 @@ export interface SessionUser {
 
 export interface Session {
   user: SessionUser;
+  sessionToken: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -82,7 +83,7 @@ async function resolveSession(token: string | null, prisma: PrismaClient): Promi
 
   if (!dbSession || dbSession.expires <= new Date()) return null;
 
-  return { user: dbSession.user };
+  return { user: dbSession.user, sessionToken: dbSession.sessionToken };
 }
 
 // ---------------------------------------------------------------------------
