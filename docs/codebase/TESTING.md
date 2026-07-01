@@ -37,25 +37,25 @@
 
 ### 3) Test Scope Matrix
 
-| Scope | Covered? | Typical target | Notes |
-|-------|----------|----------------|-------|
-| Unit (Python) | Yes (28 tests) | `llm_client.py` — LLM client error/retry logic; `prompt_manager.py` — template loading; `ast_differ.py` — AST comparison; route validation | All 4 route files + 3 service files tested indirectly |
-| Unit (TypeScript) | Yes (12 tests) | `ai-client.ts` — all 4 API methods, retry logic, health check | `ai-client.test.ts` covers normal + error + retry paths |
-| Integration (Python) | Yes (included in 28) | FastAPI routes via `httpx.AsyncClient` + `ASGITransport` | Tests run in-process without needing a server |
-| Integration (TypeScript) | No | — | No cross-service integration tests |
-| E2E | No | — | No Playwright, Cypress, or other E2E tooling |
-| Web frontend | No | — | No component or page tests |
+| Scope                    | Covered?             | Typical target                                                                                                                             | Notes                                                   |
+| ------------------------ | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------- |
+| Unit (Python)            | Yes (28 tests)       | `llm_client.py` — LLM client error/retry logic; `prompt_manager.py` — template loading; `ast_differ.py` — AST comparison; route validation | All 4 route files + 3 service files tested indirectly   |
+| Unit (TypeScript)        | Yes (12 tests)       | `ai-client.ts` — all 4 API methods, retry logic, health check                                                                              | `ai-client.test.ts` covers normal + error + retry paths |
+| Integration (Python)     | Yes (included in 28) | FastAPI routes via `httpx.AsyncClient` + `ASGITransport`                                                                                   | Tests run in-process without needing a server           |
+| Integration (TypeScript) | No                   | —                                                                                                                                          | No cross-service integration tests                      |
+| E2E                      | No                   | —                                                                                                                                          | No Playwright, Cypress, or other E2E tooling            |
+| Web frontend             | No                   | —                                                                                                                                          | No component or page tests                              |
 
 ### 4) Test File Inventory
 
-| File | Tests | What it covers | Run command |
-|------|-------|----------------|-------------|
-| `apps/ai-service/tests/conftest.py` | fixtures | Shared test fixtures: mock env, sample code data | Loaded by pytest automatically |
-| `apps/ai-service/tests/test_generate.py` | 3 tests | POST /generate/ endpoint — success, missing fields, different languages | `pytest tests/test_generate.py -v` |
-| `apps/ai-service/tests/test_quiz.py` | — | POST /quiz/generate endpoint | `pytest tests/test_quiz.py -v` |
-| `apps/ai-service/tests/test_diff.py` | — | POST /diff/ endpoint — AST comparison, identical code, different code | `pytest tests/test_diff.py -v` |
-| `apps/ai-service/tests/test_defend.py` | — | POST /defend/respond endpoint — ask mode, evaluate mode, error handling | `pytest tests/test_defend.py -v` |
-| `apps/api/src/__tests__/ai-client.test.ts` | 12 tests | AIClient — all 4 methods, mapResponse, retry logic, health check | `pnpm --filter api test` |
+| File                                       | Tests    | What it covers                                                          | Run command                        |
+| ------------------------------------------ | -------- | ----------------------------------------------------------------------- | ---------------------------------- |
+| `apps/ai-service/tests/conftest.py`        | fixtures | Shared test fixtures: mock env, sample code data                        | Loaded by pytest automatically     |
+| `apps/ai-service/tests/test_generate.py`   | 3 tests  | POST /generate/ endpoint — success, missing fields, different languages | `pytest tests/test_generate.py -v` |
+| `apps/ai-service/tests/test_quiz.py`       | 6 tests  | POST /quiz/generate endpoint                                            | `pytest tests/test_quiz.py -v`     |
+| `apps/ai-service/tests/test_diff.py`       | 12 tests | POST /diff/ endpoint — AST comparison, identical code, different code   | `pytest tests/test_diff.py -v`     |
+| `apps/ai-service/tests/test_defend.py`     | 7 tests  | POST /defend/respond endpoint — ask mode, evaluate mode, error handling | `pytest tests/test_defend.py -v`   |
+| `apps/api/src/__tests__/ai-client.test.ts` | 12 tests | AIClient — all 4 methods, mapResponse, retry logic, health check        | `pnpm --filter api test`           |
 
 ### 5) Mocking and Isolation Strategy
 

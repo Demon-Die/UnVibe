@@ -1,0 +1,435 @@
+
+=== DIRECTORY TREE (max depth 3, source files only) ===
+.claude
+.claude\settings.local.json
+.env
+.env.example
+.github
+.github\workflows
+.github\workflows\discord.yml
+.gitignore
+.planning
+.planning\code-review
+.planning\codebase-maps
+.planning\debug
+.planning\debug\redis-econnrefused.md
+.planning\debug\ts-build-errors.md
+.planning\intel
+.planning\intel\.last-refresh.json
+.planning\intel\apis.json
+.planning\intel\arch.md
+.planning\intel\ARCHITECTURE-MAP.md
+.planning\intel\deps.json
+.planning\intel\files.json
+.planning\intel\PATTERNS.md
+.planning\intel\stack.json
+.planning\research
+apps
+apps\ai-service
+apps\ai-service\.pytest_cache
+apps\ai-service\.pytest_cache\.gitignore
+apps\ai-service\.pytest_cache\CACHEDIR.TAG
+apps\ai-service\.pytest_cache\README.md
+apps\ai-service\.pytest_cache\v
+apps\ai-service\app
+apps\ai-service\app\__init__.py
+apps\ai-service\app\config.py
+apps\ai-service\app\main.py
+apps\ai-service\app\prompts
+apps\ai-service\app\routes
+apps\ai-service\app\services
+apps\ai-service\pytest.ini
+apps\ai-service\requirements.txt
+apps\ai-service\tests
+apps\ai-service\tests\__init__.py
+apps\ai-service\tests\conftest.py
+apps\ai-service\tests\test_defend.py
+apps\ai-service\tests\test_diff.py
+apps\ai-service\tests\test_generate.py
+apps\ai-service\tests\test_quiz.py
+apps\api
+apps\api\jest.config.ts
+apps\api\package.json
+apps\api\prisma
+apps\api\prisma\migrations
+apps\api\prisma\schema.prisma
+apps\api\src
+apps\api\src\__tests__
+apps\api\src\context.ts
+apps\api\src\index.ts
+apps\api\src\services
+apps\api\src\trpc.ts
+apps\api\tsconfig.json
+apps\web
+apps\web\.eslintrc.json
+apps\web\components.json
+apps\web\next-env.d.ts
+apps\web\next.config.mjs
+apps\web\package.json
+apps\web\postcss.config.mjs
+apps\web\README.md
+apps\web\sentry.client.config.ts
+apps\web\sentry.edge.config.ts
+apps\web\sentry.server.config.ts
+apps\web\src
+apps\web\src\app
+apps\web\src\auth.ts
+apps\web\src\components
+apps\web\src\lib
+apps\web\src\middleware.ts
+apps\web\src\stores
+apps\web\tailwind.config.ts
+apps\web\tsconfig.json
+CODE_OF_CONDUCT.md
+CONTRIBUTING.md
+docs
+docs\codebase
+docs\codebase\.codebase-scan.txt
+docs\codebase\ARCHITECTURE.md
+docs\codebase\CONCERNS.md
+docs\codebase\CONVENTIONS.md
+docs\codebase\INTEGRATIONS.md
+docs\codebase\STACK.md
+docs\codebase\STRUCTURE.md
+docs\codebase\TESTING.md
+eslint.base.json
+infra
+infra\docker-compose.yml
+LICENSE
+package-lock.json
+package.json
+packages
+packages\types
+packages\types\package.json
+packages\types\src
+packages\types\src\index.ts
+packages\types\tsconfig.json
+pnpm-lock.yaml
+pnpm-workspace.yaml
+README.md
+REVIEW-FIX.md
+tsconfig.base.json
+turbo.json
+
+=== STACK DETECTION (manifest files) ===
+
+--- package-lock.json ---
+{
+  "name": "unvibe-monorepo",
+  "lockfileVersion": 3,
+  "requires": true,
+  "packages": {
+    "": {
+      "name": "unvibe-monorepo",
+      "devDependencies": {
+        "turbo": "^2.0.0"
+      }
+    },
+    "node_modules/@turbo/darwin-64": {
+      "version": "2.10.0",
+      "resolved": "https://registry.npmjs.org/@turbo/darwin-64/-/darwin-64-2.10.0.tgz",
+      "integrity": "sha512-EwvHThXzpY0KGd1/NAmuewI5D+aVa3Rl/OlxE36yfjUKb/+ySrfJrSlEFt8aD1OXwnnaHnQnPKHFndor0Zxlsg==",
+      "cpu": [
+        "x64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "darwin"
+      ]
+    },
+    "node_modules/@turbo/darwin-arm64": {
+      "version": "2.10.0",
+      "resolved": "https://registry.npmjs.org/@turbo/darwin-arm64/-/darwin-arm64-2.10.0.tgz",
+      "integrity": "sha512-9d2fTyyG0lf5Wq1bwJA9qUaeecViMkLcdctWaMMmCkxZ/JqypmqOwK3W6vmejeKVgkr06gSoiX8bD+xN5Jpxcg==",
+      "cpu": [
+        "arm64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "darwin"
+      ]
+    },
+    "node_modules/@turbo/linux-64": {
+      "version": "2.10.0",
+      "resolved": "https://registry.npmjs.org/@turbo/linux-64/-/linux-64-2.10.0.tgz",
+      "integrity": "sha512-sZBtjMuufitanjzi6UssoUpJMnnPlLMcdcJj3m3ptNsSq31Xh7MnjhwA5nWvLDTfEFg8GPcbYFXMo8vSdKRfqQ==",
+      "cpu": [
+        "x64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "linux"
+      ]
+    },
+    "node_modules/@turbo/linux-arm64": {
+      "version": "2.10.0",
+      "resolved": "https://registry.npmjs.org/@turbo/linux-arm64/-/linux-arm64-2.10.0.tgz",
+      "integrity": "sha512-vkq/Z8R+1DQ+kifWFa810IjRy2NNBVvha3cg9sWA3nFh6nnGrHSMnnJKrzH7c/No9kq4Jb55Ru44YKsCSBgrKg==",
+      "cpu": [
+        "arm64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "linux"
+      ]
+    },
+    "node_modules/@turbo/windows-64": {
+      "version": "2.10.0",
+      "resolved": "https://registry.npmjs.org/@turbo/windows-64/-/windows-64-2.10.0.tgz",
+      "integrity": "sha512-CRUEguLWxFQHptYZS7HjPhNhAFawfea07iR+xAQ5e4klgLrPCMdexBkXwSCwOxqTFknJ7RZFN3gOaADsw+Gttg==",
+      "cpu": [
+        "x64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "win32"
+      ]
+
+[TRUNCATED] Showing first 80 of 115 lines.
+--- package.json ---
+{
+  "name": "unvibe-monorepo",
+  "private": true,
+  "packageManager": "pnpm@10.18.0",
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "test": "turbo test",
+    "db:migrate": "turbo db:migrate",
+    "db:seed": "turbo db:seed"
+  },
+  "devDependencies": {
+    "turbo": "^2.0.0"
+  }
+}
+
+--- pnpm-lock.yaml ---
+lockfileVersion: '9.0'
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
+importers:
+
+  .:
+    devDependencies:
+      turbo:
+        specifier: ^2.0.0
+        version: 2.10.0
+
+  apps/api:
+    dependencies:
+      '@auth/prisma-adapter':
+        specifier: ^1.6.0
+        version: 1.6.0(@prisma/client@5.22.0(prisma@5.22.0))
+      '@prisma/client':
+        specifier: ^5.12.1
+        version: 5.22.0(prisma@5.22.0)
+      '@sentry/node':
+        specifier: ^7.109.0
+        version: 7.120.4
+      '@trpc/client':
+        specifier: ^10.45.2
+        version: 10.45.4(@trpc/server@10.45.4)
+      '@trpc/server':
+        specifier: ^10.45.2
+        version: 10.45.4
+      '@unvibe/types':
+        specifier: workspace:*
+        version: link:../../packages/types
+      bullmq:
+        specifier: ^5.7.0
+        version: 5.79.1
+      cors:
+        specifier: ^2.8.5
+        version: 2.8.6
+      dotenv:
+        specifier: ^16.4.5
+        version: 16.6.1
+      express:
+        specifier: ^4.19.2
+        version: 4.22.2
+      pino:
+        specifier: ^8.20.0
+        version: 8.21.0
+      pino-pretty:
+        specifier: ^11.0.0
+        version: 11.3.0
+      socket.io:
+        specifier: ^4.7.5
+        version: 4.8.3
+      zod:
+        specifier: ^3.22.4
+        version: 3.25.76
+    devDependencies:
+      '@types/cors':
+        specifier: ^2.8.17
+        version: 2.8.19
+      '@types/express':
+        specifier: ^4.17.21
+        version: 4.17.25
+      '@types/node':
+        specifier: ^20.12.7
+        version: 20.19.43
+      prisma:
+        specifier: ^5.12.1
+        version: 5.22.0
+      tsx:
+        specifier: ^4.7.2
+        version: 4.22.4
+      typescript:
+        specifier: ^5.4.5
+        version: 5.9.3
+
+  apps/web:
+    dependencies:
+
+[TRUNCATED] Showing first 80 of 6409 lines.
+
+=== ENTRY POINTS ===
+No common entry points found. Check 'main' or 'scripts.start' in manifest files above.
+
+=== LINTING AND FORMATTING CONFIG ===
+Found: tsconfig.base.json
+
+=== ENVIRONMENT VARIABLE TEMPLATES ===
+--- .env.example ---
+# Database configuration (PostgreSQL)
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/unvibe?schema=public"
+
+# Redis cache and queue
+REDIS_URL="redis://localhost:6379"
+
+# NextAuth authentication config
+NEXTAUTH_SECRET="some-very-secure-random-secret-key-at-least-32-chars-long"
+NEXTAUTH_URL="http://localhost:3000"
+
+# Auth Providers OAuth credentials
+GITHUB_CLIENT_ID="github_client_id_placeholder"
+GITHUB_CLIENT_SECRET="github_client_secret_placeholder"
+GOOGLE_CLIENT_ID="google_client_id_placeholder"
+GOOGLE_CLIENT_SECRET="google_client_secret_placeholder"
+
+# AI services — OpenRouter (unified access to 200+ models)
+OPENROUTER_API_KEY="sk-or-v1-..."
+# Model selection (optional, defaults to google/gemini-2.0-flash-001)
+# Options: google/gemini-2.0-flash-001, openai/gpt-4o-mini, anthropic/claude-sonnet-4-20250514, deepseek/deepseek-chat
+LLM_MODEL="google/gemini-2.0-flash-001"
+
+# Cloudflare R2 Storage credentials
+R2_ACCOUNT_ID="r2_account_id_placeholder"
+R2_ACCESS_KEY_ID="r2_access_key_id_placeholder"
+R2_SECRET_ACCESS_KEY="r2_secret_access_key_placeholder"
+R2_BUCKET_NAME="unvibe-assets"
+
+# Email service
+RESEND_API_KEY="re_..."
+
+# Sentry application monitoring DSNs
+SENTRY_DSN_WEB="https://example_public_key@o0.ingest.sentry.io/0"
+SENTRY_DSN_API="https://example_public_key@o0.ingest.sentry.io/0"
+
+# Posthog analytics public key
+NEXT_PUBLIC_POSTHOG_KEY="phc_..."
+
+
+=== TODO / FIXME / HACK (production code only, test dirs excluded) ===
+None found.
+
+=== GIT RECENT COMMITS (last 20) ===
+70a2f4d Merge pull request #16 from Shantanusongirkar/feat/auth-context
+78b98e7 Merge remote-tracking branch 'origin/main' into feat/auth-context
+c645e04 git
+bb980cf feat(api): implement authenticated tRPC context
+55faae7 Merge pull request #15 from Yuvraj-Sarathe/main
+bac018a Merge branch 'Omnikon-Org:main' into main
+ae5054b updated docs
+87b2ec7 Merge pull request #14 from Yuvraj-Sarathe/Python-Yuvraj
+f32e5d1 Delete DEV-2-AI-SERVICE.md
+c982a0b Merge branch 'Omnikon-Org:main' into Python-Yuvraj
+f785ee8 feat: Dev 2 â€” AI Service full implementation
+5981d94 fix(api): make Redis/BullMQ init resilient to avoid ECONNREFUSED spam
+f3e104f fix(02): WR-02 add anyio, WR-05 strip fences in generate, WR-09 fix AsyncClient cleanup, WR-10 safe key access, WR-11 clamp score
+eee641b fix(02): WR-01 extract shared strip_markdown_fence utility function and use in quiz and defend routes
+159d5e3 fix(02): CR-08 fix greedy function matching with proper bipartite matching
+d56fc03 fix(02): CR-06 CR-07 fix test key prefix, env cleanup, status codes, and config key validation
+37e48f5 fix(02): CR-04 fix ANTHROPIC_API_KEY to OPENROUTER_API_KEY in error messages
+dd1a77d fix(02): CR-02 add timeout=Timeout(30.0, connect=10.0) to OpenAI client and import Timeout
+11612df fix(02): CR-01 change sync llm.generate() to await llm.generate_async() in all routes
+ed4838c Merge pull request #13 from SourabhX16/feat/frontend-app-shell
+
+=== HIGH-CHURN FILES (last 90 days, top 20) ===
+   5 apps/ai-service/app/routes/defend.py
+   5 apps/ai-service/app/routes/quiz.py
+   3 apps/api/src/index.ts
+   3 apps/api/tsconfig.json
+   3 apps/ai-service/app/routes/generate.py
+   3 apps/web/src/app/globals.css
+   3 apps/web/src/app/layout.tsx
+   3 apps/web/src/app/page.tsx
+   3 pnpm-lock.yaml
+   3 README.md
+   2 apps/api/src/trpc.ts
+   2 docs/codebase/ARCHITECTURE.md
+   2 docs/codebase/CONCERNS.md
+   2 docs/codebase/CONVENTIONS.md
+   2 docs/codebase/INTEGRATIONS.md
+   2 docs/codebase/STACK.md
+   2 docs/codebase/STRUCTURE.md
+   2 docs/codebase/TESTING.md
+   2 DEV-2-AI-SERVICE.md
+   2 .env.example
+
+=== MONOREPO SIGNALS ===
+Monorepo tool detected: pnpm-workspace.yaml
+Monorepo tool detected: turbo.json
+Sub-package directory found: packages/
+Sub-package directory found: apps/
+
+=== CODE METRICS ===
+Total files scanned: 139
+Total lines of code: 5953
+
+Files by language:
+  Other: 59
+  TypeScript/React: 34
+  TypeScript: 26
+  Python: 20
+
+Top 10 largest files:
+pnpm-lock.yaml: 201.3KB
+apps\web\src\app\fonts\GeistMonoVF.woff: 66.3KB
+apps\web\src\app\fonts\GeistVF.woff: 64.7KB
+.planning\intel\ARCHITECTURE-MAP.md: 30.2KB
+apps\web\src\app\favicon.ico: 25.3KB
+.planning\intel\PATTERNS.md: 22.0KB
+README.md: 21.9KB
+apps\ai-service\app\services\ast_differ.py: 21.9KB
+docs\codebase\CONCERNS.md: 10.8KB
+apps\api\src\services\ai-client.ts: 8.3KB
+
+=== CI/CD PIPELINES ===
+CI/CD: GitHub Actions
+
+=== CONTAINERS & ORCHESTRATION ===
+No containerization configs detected.
+
+=== SECURITY & COMPLIANCE ===
+No security configs detected.
+
+=== PERFORMANCE & TESTING ===
+No performance testing configs detected.
+
+=== SCAN COMPLETE ===

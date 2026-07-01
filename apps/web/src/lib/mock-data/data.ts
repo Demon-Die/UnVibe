@@ -1,4 +1,12 @@
-import type { Annotation, Blindspot, DiffLine, LeaderboardEntry, MockTrack, QuizQuestion, WarRoomMessage } from "./types";
+import type {
+  Annotation,
+  Blindspot,
+  DiffLine,
+  LeaderboardEntry,
+  MockTrack,
+  QuizQuestion,
+  WarRoomMessage,
+} from "./types";
 
 const sourceCode = `export function createGuard(session) {
   if (!session?.user) {
@@ -99,25 +107,45 @@ export const quiz: QuizQuestion[] = [
   {
     id: "q1",
     prompt: "Why does the guard use optional chaining on session?",
-    options: ["To make the code shorter", "To avoid reading user from null or undefined", "To memoize the session", "To force OAuth refresh"],
+    options: [
+      "To make the code shorter",
+      "To avoid reading user from null or undefined",
+      "To memoize the session",
+      "To force OAuth refresh",
+    ],
     answerIndex: 1,
     explanation: "The first branch must be safe even when there is no session object.",
   },
   {
     id: "q2",
     prompt: "What behavior should remain stable in the rebuild?",
-    options: ["Only exact whitespace", "The builder role check and failure reason", "The import order", "The variable names only"],
+    options: [
+      "Only exact whitespace",
+      "The builder role check and failure reason",
+      "The import order",
+      "The variable names only",
+    ],
     answerIndex: 1,
     explanation: "The important behavior is access control and clear feedback, not identical formatting.",
   },
 ];
 
 export const diffLines: DiffLine[] = [
-  { id: "d1", type: "same", left: "export function createGuard(session) {", right: "export function createGuard(session) {" },
+  {
+    id: "d1",
+    type: "same",
+    left: "export function createGuard(session) {",
+    right: "export function createGuard(session) {",
+  },
   { id: "d2", type: "same", left: "  if (!session?.user) {", right: "  if (!session?.user) {" },
-  { id: "d3", type: "remove", left: "    return { allowed: false, reason: \"Missing user\" };" },
-  { id: "d4", type: "add", right: "    return { allowed: false, reason: \"No user\" };" },
-  { id: "d5", type: "same", left: "  const roles = session.user.roles ?? [];", right: "  const roles = session.user.roles ?? [];" },
+  { id: "d3", type: "remove", left: '    return { allowed: false, reason: "Missing user" };' },
+  { id: "d4", type: "add", right: '    return { allowed: false, reason: "No user" };' },
+  {
+    id: "d5",
+    type: "same",
+    left: "  const roles = session.user.roles ?? [];",
+    right: "  const roles = session.user.roles ?? [];",
+  },
   { id: "d6", type: "same", left: "}", right: "}" },
 ];
 
@@ -129,15 +157,51 @@ export const leaderboard: LeaderboardEntry[] = [
 ];
 
 export const warRoomMessages: WarRoomMessage[] = [
-  { id: "m1", author: "System", body: "Room opened for Auth guard rebuild.", timestamp: "11:42", kind: "system" },
-  { id: "m2", author: "Mira", body: "Watch the default roles branch. It is easy to miss.", timestamp: "11:44", kind: "chat" },
-  { id: "m3", author: "Defend Bot", body: "Explain why a missing role should return a reason string.", timestamp: "11:45", kind: "defend" },
+  {
+    id: "m1",
+    author: "System",
+    body: "Room opened for Auth guard rebuild.",
+    timestamp: "11:42",
+    kind: "system",
+  },
+  {
+    id: "m2",
+    author: "Mira",
+    body: "Watch the default roles branch. It is easy to miss.",
+    timestamp: "11:44",
+    kind: "chat",
+  },
+  {
+    id: "m3",
+    author: "Defend Bot",
+    body: "Explain why a missing role should return a reason string.",
+    timestamp: "11:45",
+    kind: "defend",
+  },
 ];
 
 export const blindspots: Blindspot[] = [
-  { id: "b1", concept: "Null-safe access", severity: 78, evidence: "Missed 2 optional chaining branches", nextAction: "Replay auth guard decode" },
-  { id: "b2", concept: "Cache invalidation", severity: 62, evidence: "Submitted stale query policy twice", nextAction: "Rebuild query cache module" },
-  { id: "b3", concept: "Role semantics", severity: 44, evidence: "Weak defend answer on authorization reasons", nextAction: "Answer 3 defend prompts" },
+  {
+    id: "b1",
+    concept: "Null-safe access",
+    severity: 78,
+    evidence: "Missed 2 optional chaining branches",
+    nextAction: "Replay auth guard decode",
+  },
+  {
+    id: "b2",
+    concept: "Cache invalidation",
+    severity: 62,
+    evidence: "Submitted stale query policy twice",
+    nextAction: "Rebuild query cache module",
+  },
+  {
+    id: "b3",
+    concept: "Role semantics",
+    severity: 44,
+    evidence: "Weak defend answer on authorization reasons",
+    nextAction: "Answer 3 defend prompts",
+  },
 ];
 
 export const radarData = [

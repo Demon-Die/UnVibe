@@ -8,7 +8,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Leaderboard } from "./leaderboard";
 
-export function WarRoomLive({ messages: initialMessages, leaderboard }: { messages: WarRoomMessage[]; leaderboard: LeaderboardEntry[] }) {
+export function WarRoomLive({
+  messages: initialMessages,
+  leaderboard,
+}: {
+  messages: WarRoomMessage[];
+  leaderboard: LeaderboardEntry[];
+}) {
   const [messages, setMessages] = useState(initialMessages);
   const [draft, setDraft] = useState("");
 
@@ -53,11 +59,18 @@ export function WarRoomLive({ messages: initialMessages, leaderboard }: { messag
             ))}
           </div>
           <div className="mt-3 flex gap-2">
-            <Input value={draft} onChange={(event) => setDraft(event.target.value)} placeholder="Send a room note" />
+            <Input
+              value={draft}
+              onChange={(event) => setDraft(event.target.value)}
+              placeholder="Send a room note"
+            />
             <Button
               onClick={() => {
                 if (!draft.trim()) return;
-                setMessages((items) => [...items, { id: crypto.randomUUID(), author: "You", body: draft, timestamp: "now", kind: "chat" }]);
+                setMessages((items) => [
+                  ...items,
+                  { id: crypto.randomUUID(), author: "You", body: draft, timestamp: "now", kind: "chat" },
+                ]);
                 setDraft("");
               }}
             >

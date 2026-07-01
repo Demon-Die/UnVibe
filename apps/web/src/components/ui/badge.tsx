@@ -11,13 +11,17 @@ const variants: Record<BadgeVariant, string> = {
   warning: "border-amber-500/30 bg-amber-500/10 text-amber-300",
 };
 
-export function Badge({ className, variant = "default", ...props }: React.HTMLAttributes<HTMLDivElement> & { variant?: BadgeVariant }) {
+export function Badge({
+  className,
+  variant = "default",
+  ...props
+}: React.HTMLAttributes<HTMLDivElement> & { variant?: BadgeVariant }) {
   return (
     <div
       className={cn(
         "inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-medium",
         variants[variant],
-        className
+        className,
       )}
       {...props}
     />

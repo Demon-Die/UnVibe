@@ -15,7 +15,12 @@ export default function ProfilePage() {
 
   return (
     <>
-      <PageHeader eyebrow="profile" title={profile.name} description={profile.role} action={<Badge>IRS {profile.irs}</Badge>} />
+      <PageHeader
+        eyebrow="profile"
+        title={profile.name}
+        description={profile.role}
+        action={<Badge>IRS {profile.irs}</Badge>}
+      />
       <div className="grid gap-4 lg:grid-cols-[1fr_320px]">
         <IRSRadarChart data={profile.radarData} />
         <StreakTracker streak={profile.streak} />
@@ -37,7 +42,9 @@ export default function ProfilePage() {
           </CardHeader>
           <CardContent className="space-y-2">
             {profile.recent.map((item) => (
-              <div key={item} className="rounded-md border border-border bg-background/60 p-3 text-sm">{item}</div>
+              <div key={item} className="rounded-md border border-border bg-background/60 p-3 text-sm">
+                {item}
+              </div>
             ))}
           </CardContent>
         </Card>

@@ -1,8 +1,8 @@
-import type { Request } from 'express';
-import type { PrismaClient } from '@prisma/client';
-import type { Logger } from 'pino';
-import type { Server } from 'socket.io';
-import type { Queue } from 'bullmq';
+import type { Request } from "express";
+import type { PrismaClient } from "@prisma/client";
+import type { Logger } from "pino";
+import type { Server } from "socket.io";
+import type { Queue } from "bullmq";
 
 // ---------------------------------------------------------------------------
 // Shared infrastructure dependencies injected at startup
@@ -41,7 +41,7 @@ export interface Session {
 export function extractSessionToken(req: Request): string | null {
   // 1. Bearer token header
   const authHeader = req.headers.authorization;
-  if (authHeader?.startsWith('Bearer ')) {
+  if (authHeader?.startsWith("Bearer ")) {
     return authHeader.slice(7).trim() || null;
   }
 
@@ -68,10 +68,7 @@ export function extractSessionToken(req: Request): string | null {
 // Returns null for missing, invalid, or expired sessions — never throws.
 // Callers (protectedProcedure) decide whether to error.
 // ---------------------------------------------------------------------------
-async function resolveSession(
-  token: string | null,
-  prisma: PrismaClient
-): Promise<Session | null> {
+async function resolveSession(token: string | null, prisma: PrismaClient): Promise<Session | null> {
   if (!token) return null;
 
   const dbSession = await prisma.session.findUnique({
@@ -91,10 +88,7 @@ async function resolveSession(
 // ---------------------------------------------------------------------------
 // createContext — called per request by the tRPC Express adapter
 // ---------------------------------------------------------------------------
-export async function createContext(
-  { req }: { req: Request },
-  deps: ContextDeps
-): Promise<Context> {
+export async function createContext({ req }: { req: Request }, deps: ContextDeps): Promise<Context> {
   const token = extractSessionToken(req);
   const session = await resolveSession(token, deps.prisma);
 

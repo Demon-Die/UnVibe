@@ -15,7 +15,9 @@ export default function SignInPage() {
       <Card className="w-full max-w-md bg-card/95 backdrop-blur">
         <CardHeader>
           <Link href="/" className="mb-6 flex items-center gap-3">
-            <span className="flex h-9 w-9 items-center justify-center rounded-md bg-primary/15 font-mono text-sm font-semibold text-primary">UV</span>
+            <span className="flex h-9 w-9 items-center justify-center rounded-md bg-primary/15 font-mono text-sm font-semibold text-primary">
+              UV
+            </span>
             <span className="font-semibold">UnVibe</span>
           </Link>
           <CardTitle className="text-2xl">Sign in</CardTitle>
@@ -37,7 +39,10 @@ export default function SignInPage() {
             </Button>
           </div>
           <p className="pt-2 text-center text-sm text-muted-foreground">
-            New here? <Link className="text-primary" href="/auth/signup">Create an account</Link>
+            New here?{" "}
+            <Link className="text-primary" href="/auth/signup">
+              Create an account
+            </Link>
           </p>
         </CardContent>
       </Card>

@@ -13,12 +13,19 @@ export function AnnotationEditor({ annotations: initial }: { annotations: Annota
   return (
     <div className="space-y-3">
       <div className="flex gap-2">
-        <Textarea value={note} onChange={(event) => setNote(event.target.value)} placeholder="Add what this block is responsible for." />
+        <Textarea
+          value={note}
+          onChange={(event) => setNote(event.target.value)}
+          placeholder="Add what this block is responsible for."
+        />
         <Button
           className="self-start"
           onClick={() => {
             if (!note.trim()) return;
-            setAnnotations((items) => [...items, { id: crypto.randomUUID(), line: 1 + items.length * 2, tag: "note", note }]);
+            setAnnotations((items) => [
+              ...items,
+              { id: crypto.randomUUID(), line: 1 + items.length * 2, tag: "note", note },
+            ]);
             setNote("");
           }}
         >

@@ -16,7 +16,11 @@ export default function TracksPage() {
 
   return (
     <>
-      <PageHeader eyebrow="tracks" title="Choose a training path" description="Every track is mocked now, but the structures match the planned module flow." />
+      <PageHeader
+        eyebrow="tracks"
+        title="Choose a training path"
+        description="Every track is mocked now, but the structures match the planned module flow."
+      />
       <div className="grid gap-4 lg:grid-cols-3">
         {tracks.map((track) => (
           <Card key={track.id}>
@@ -37,7 +41,11 @@ export default function TracksPage() {
               </div>
               <div className="space-y-2">
                 {track.modules.map((module) => (
-                  <Link key={module.id} href={`/app/tracks/${track.id}/modules/${module.id}`} className="flex items-center justify-between rounded-md border border-border bg-background/60 p-3 text-sm transition hover:border-primary/60">
+                  <Link
+                    key={module.id}
+                    href={`/app/tracks/${track.id}/modules/${module.id}`}
+                    className="flex items-center justify-between rounded-md border border-border bg-background/60 p-3 text-sm transition hover:border-primary/60"
+                  >
                     <span>{module.title}</span>
                     <ArrowRight className="h-4 w-4 text-muted-foreground" />
                   </Link>

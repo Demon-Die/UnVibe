@@ -46,45 +46,47 @@ Browser (Next.js App)
 
 ### 3) Layer/Module Responsibilities
 
-| Layer or module | Owns | Must not own | Evidence |
-|-----------------|------|--------------|----------|
-| `apps/web` (Frontend) | UI rendering, client state (Zustand), server state caching (React Query), routing, auth UI, animations | Direct database access, AI orchestration | `apps/web/src/app/layout.tsx`, `apps/web/src/app/providers.tsx` |
-| `apps/api` (Backend) | HTTP/tRPC endpoints, authentication, business logic, database access (Prisma), job queue (BullMQ), real-time (Socket.io), logging, rate limiting | AI model calls, frontend rendering | `apps/api/src/index.ts`, `apps/api/src/services/ai-client.ts`, `apps/api/src/services/submission-worker.ts` |
-| `apps/ai-service` (AI) | LLM integration via OpenRouter (or offline AST diff), code generation, quiz generation, diff scoring, defend Q&A | User data storage, authentication, frontend rendering | `apps/ai-service/app/main.py`, `apps/ai-service/app/routes/`, `apps/ai-service/app/services/llm_client.py`, `apps/ai-service/app/services/ast_differ.py` |
-| `packages/types` (Shared types) | TypeScript interfaces shared between web + api | Runtime logic, external dependencies | `packages/types/src/index.ts` |
-| `infra/docker-compose.yml` (Infrastructure) | PostgreSQL, Redis for local development | Application code, migrations | `infra/docker-compose.yml` |
+| Layer or module                             | Owns                                                                                                                                             | Must not own                                          | Evidence                                                                                                                                                 |
+| ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `apps/web` (Frontend)                       | UI rendering, client state (Zustand), server state caching (React Query), routing, auth UI, animations                                           | Direct database access, AI orchestration              | `apps/web/src/app/layout.tsx`, `apps/web/src/app/providers.tsx`                                                                                          |
+| `apps/api` (Backend)                        | HTTP/tRPC endpoints, authentication, business logic, database access (Prisma), job queue (BullMQ), real-time (Socket.io), logging, rate limiting | AI model calls, frontend rendering                    | `apps/api/src/index.ts`, `apps/api/src/services/ai-client.ts`, `apps/api/src/services/submission-worker.ts`                                              |
+| `apps/ai-service` (AI)                      | LLM integration via OpenRouter (or offline AST diff), code generation, quiz generation, diff scoring, defend Q&A                                 | User data storage, authentication, frontend rendering | `apps/ai-service/app/main.py`, `apps/ai-service/app/routes/`, `apps/ai-service/app/services/llm_client.py`, `apps/ai-service/app/services/ast_differ.py` |
+| `packages/types` (Shared types)             | TypeScript interfaces shared between web + api                                                                                                   | Runtime logic, external dependencies                  | `packages/types/src/index.ts`                                                                                                                            |
+| `infra/docker-compose.yml` (Infrastructure) | PostgreSQL, Redis for local development                                                                                                          | Application code, migrations                          | `infra/docker-compose.yml`                                                                                                                               |
 
 ### 4) Reused Patterns
 
-| Pattern | Where found | Why it exists |
-|---------|-------------|---------------|
-| tRPC (Type-safe RPC) | `apps/api/src/trpc.ts` — router, publicProcedure, middleware factories | Type-safe API contracts between frontend and backend |
-| Prisma ORM (Repository pattern) | `apps/api/prisma/schema.prisma` + `apps/api/src/index.ts` singleton PrismaClient | Type-safe database access with migrations |
-| BullMQ (Job queue) | `apps/api/src/index.ts` — `submissions` queue + `submission-worker.ts` worker | Async processing of submission scoring and Defend session scheduling |
-| Socket.io (Pub/sub) | `apps/api/src/index.ts` — Socket.io server with wildcard CORS | Real-time features (Defend sessions, War Rooms) |
-| NextAuth.js (Auth adapter) | `apps/web/src/auth.ts` — GitHub + Google OAuth providers; `apps/web/src/app/api/auth/[...nextauth]/route.ts` | Authentication with OAuth providers |
-| Sentry (Error monitoring) | `apps/web/sentry.client.config.ts`, `sentry.server.config.ts`, `sentry.edge.config.ts`; `apps/api/src/index.ts` conditional Sentry init | Error tracking across frontend and backend |
-| Turborepo (Monorepo orchestration) | `turbo.json` pipeline with dependency ordering | Parallel builds, consistent task execution across workspaces |
-| OpenAI SDK → OpenRouter | `apps/ai-service/app/services/llm_client.py` — uses OpenAI SDK pointed at OpenRouter's base URL | Unified API client for 200+ models from any provider |
-| AST diff engine | `apps/ai-service/app/services/ast_differ.py` — offline Python AST comparison across 4 dimensions | Zero-cost code scoring without any LLM call; works entirely offline |
+| Pattern                            | Where found                                                                                                                             | Why it exists                                                        |
+| ---------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| tRPC (Type-safe RPC)               | `apps/api/src/trpc.ts` — router, publicProcedure, middleware factories                                                                  | Type-safe API contracts between frontend and backend                 |
+| Prisma ORM (Repository pattern)    | `apps/api/prisma/schema.prisma` + `apps/api/src/index.ts` singleton PrismaClient                                                        | Type-safe database access with migrations                            |
+| BullMQ (Job queue)                 | `apps/api/src/index.ts` — `submissions` queue + `submission-worker.ts` worker                                                           | Async processing of submission scoring and Defend session scheduling |
+| Socket.io (Pub/sub)                | `apps/api/src/index.ts` — Socket.io server with wildcard CORS                                                                           | Real-time features (Defend sessions, War Rooms)                      |
+| NextAuth.js (Auth adapter)         | `apps/web/src/auth.ts` — GitHub + Google OAuth providers; `apps/web/src/app/api/auth/[...nextauth]/route.ts`                            | Authentication with OAuth providers                                  |
+| Sentry (Error monitoring)          | `apps/web/sentry.client.config.ts`, `sentry.server.config.ts`, `sentry.edge.config.ts`; `apps/api/src/index.ts` conditional Sentry init | Error tracking across frontend and backend                           |
+| Turborepo (Monorepo orchestration) | `turbo.json` pipeline with dependency ordering                                                                                          | Parallel builds, consistent task execution across workspaces         |
+| OpenAI SDK → OpenRouter            | `apps/ai-service/app/services/llm_client.py` — uses OpenAI SDK pointed at OpenRouter's base URL                                         | Unified API client for 200+ models from any provider                 |
+| AST diff engine                    | `apps/ai-service/app/services/ast_differ.py` — offline Python AST comparison across 4 dimensions                                        | Zero-cost code scoring without any LLM call; works entirely offline  |
 
 ### 5) Known Architectural Risks
 
-| Risk | Impact | Evidence |
-|------|--------|----------|
-| No auth middleware on tRPC | Any endpoint added by default is public | `apps/api/src/trpc.ts` only exports `publicProcedure` — no `protectedProcedure` |
-| CORS set to `allow_origins=["*"]` on both API and AI service | Insecure for production — allows any origin to make requests | `apps/api/src/index.ts` CORS config; `apps/ai-service/app/main.py` CORS config |
-| AI service uses thread-pool async (sync calls wrapped with `anyio.to_thread.run_sync`) | Under load, the GIL may become a bottleneck for concurrent LLM requests | `apps/ai-service/app/services/llm_client.py` — `generate_async()` wraps sync `generate()` |
-| No database migrations committed | The Prisma schema exists but `prisma/migrations/` is empty; no deployment path | `apps/api/prisma/` directory |
-| Frontend still operates on client-side mock data | All frontend pages render mock data; no real API/tRPC calls from the web app | `apps/web/src/lib/mock-data/` — entire mock data layer |
-| No test coverage for backend routes or tRPC routers | 12 TypeScript tests exist for `ai-client.ts` only; Python has 28 tests for AI service | `apps/api/src/__tests__/` (single test file); `apps/ai-service/tests/` |
+| Risk                                                                                   | Impact                                                                                        | Evidence                                                                                                                                               |
+| -------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| No tRPC route handlers use auth middleware                                             | `protectedProcedure` exists but no route handlers use it yet                                  | `apps/api/src/trpc.ts` exports `protectedProcedure` (with session validation); `apps/api/src/index.ts` only registers `health` using `publicProcedure` |
+| CORS set to `allow_origins=["*"]` on both API and AI service                           | Insecure for production — allows any origin to make requests                                  | `apps/api/src/index.ts` CORS config; `apps/ai-service/app/main.py` CORS config                                                                         |
+| AI service uses thread-pool async (sync calls wrapped with `anyio.to_thread.run_sync`) | Under load, the GIL may become a bottleneck for concurrent LLM requests                       | `apps/ai-service/app/services/llm_client.py` — `generate_async()` wraps sync `generate()`                                                              |
+| Only one tRPC router registered (`health`)                                             | README describes 6 routers (auth, modules, submissions, irs, warRoom, profile) but none exist | `apps/api/src/index.ts` — `appRouter` only has `health` procedure                                                                                      |
+| Frontend still operates on client-side mock data                                       | All frontend pages render mock data; no real API/tRPC calls from the web app                  | `apps/web/src/lib/mock-data/` — entire mock data layer                                                                                                 |
+| No test coverage for backend routes or tRPC routers                                    | 12 TypeScript tests exist for `ai-client.ts` only; Python has 28 tests for AI service         | `apps/api/src/__tests__/` (single test file); `apps/ai-service/tests/`                                                                                 |
 
 ### 6) Evidence
 
 - `apps/api/src/index.ts` — entry point showing Express, tRPC, BullMQ, Socket.io setup
-- `apps/api/src/trpc.ts` — tRPC initialization (only publicProcedure exists)
+- `apps/api/src/trpc.ts` — tRPC initialization with publicProcedure and protectedProcedure (auth middleware)
+- `apps/api/src/context.ts` — authenticated tRPC context with session extraction + resolution
 - `apps/api/src/services/ai-client.ts` — typed HTTP client for Python AI service (camelCase ↔ snake_case mapping)
 - `apps/api/src/services/submission-worker.ts` — BullMQ worker for async submission processing
+- `apps/api/prisma/migrations/20260701040038_init/migration.sql` — initial migration
 - `apps/ai-service/app/main.py` — FastAPI app setup with real route mounts
 - `apps/ai-service/app/routes/generate.py` — real LLM code generation via OpenRouter
 - `apps/ai-service/app/routes/quiz.py` — real LLM quiz generation via OpenRouter

@@ -1,0 +1,269 @@
+{
+  "_meta": {
+    "updated_at": "2026-06-30T22:30:00.000Z",
+    "version": 1
+  },
+  "entries": {
+    "turborepo": {
+      "version": "^2.0.0",
+      "type": "development",
+      "used_by": ["npm run dev", "npm run build", "npm run lint", "npm run test"],
+      "invocation": "npm run dev"
+    },
+    "fastapi": {
+      "version": ">=0.110.0",
+      "type": "production",
+      "used_by": [
+        "apps/ai-service/app/main.py",
+        "apps/ai-service/app/routes/generate.py",
+        "apps/ai-service/app/routes/quiz.py",
+        "apps/ai-service/app/routes/diff.py",
+        "apps/ai-service/app/routes/defend.py"
+      ],
+      "invocation": "uvicorn"
+    },
+    "uvicorn": {
+      "version": ">=0.28.0",
+      "type": "production",
+      "used_by": [],
+      "invocation": "implicit"
+    },
+    "openai": {
+      "version": ">=1.0.0",
+      "type": "production",
+      "used_by": ["apps/ai-service/app/services/llm_client.py"],
+      "invocation": "require"
+    },
+    "anyio": {
+      "version": ">=4.0.0",
+      "type": "production",
+      "used_by": ["apps/ai-service/app/services/llm_client.py"],
+      "invocation": "require"
+    },
+    "httpx": {
+      "version": ">=0.27.0",
+      "type": "production",
+      "used_by": [
+        "apps/ai-service/tests/conftest.py",
+        "apps/ai-service/tests/test_generate.py",
+        "apps/ai-service/tests/test_quiz.py",
+        "apps/ai-service/tests/test_defend.py"
+      ],
+      "invocation": "npm test"
+    },
+    "pydantic": {
+      "version": ">=2.6.4",
+      "type": "production",
+      "used_by": [
+        "apps/ai-service/app/routes/generate.py",
+        "apps/ai-service/app/routes/quiz.py",
+        "apps/ai-service/app/routes/diff.py",
+        "apps/ai-service/app/routes/defend.py"
+      ],
+      "invocation": "require"
+    },
+    "python-dotenv": {
+      "version": ">=1.0.1",
+      "type": "production",
+      "used_by": ["apps/ai-service/app/main.py"],
+      "invocation": "require"
+    },
+    "loguru": {
+      "version": ">=0.7.2",
+      "type": "production",
+      "used_by": [
+        "apps/ai-service/app/routes/generate.py",
+        "apps/ai-service/app/routes/quiz.py",
+        "apps/ai-service/app/routes/diff.py",
+        "apps/ai-service/app/routes/defend.py",
+        "apps/ai-service/app/services/llm_client.py",
+        "apps/ai-service/app/services/prompt_manager.py"
+      ],
+      "invocation": "require"
+    },
+    "pytest": {
+      "version": "(implicit)",
+      "type": "development",
+      "used_by": [
+        "apps/ai-service/tests/conftest.py",
+        "apps/ai-service/tests/test_generate.py",
+        "apps/ai-service/tests/test_quiz.py",
+        "apps/ai-service/tests/test_diff.py",
+        "apps/ai-service/tests/test_defend.py"
+      ],
+      "invocation": "pytest"
+    },
+    "pytest-asyncio": {
+      "version": "(implicit)",
+      "type": "development",
+      "used_by": [
+        "apps/ai-service/tests/test_generate.py",
+        "apps/ai-service/tests/test_quiz.py",
+        "apps/ai-service/tests/test_defend.py"
+      ],
+      "invocation": "pytest"
+    },
+    "next": {
+      "version": "14.2.35",
+      "type": "production",
+      "used_by": [],
+      "invocation": "npm run dev"
+    },
+    "react": {
+      "version": "^18",
+      "type": "production",
+      "used_by": [],
+      "invocation": "implicit"
+    },
+    "next-auth": {
+      "version": "5.0.0-beta.25",
+      "type": "production",
+      "used_by": ["apps/web/src/auth.ts", "apps/web/src/app/providers.tsx"],
+      "invocation": "require"
+    },
+    "@tanstack/react-query": {
+      "version": "^5.28.9",
+      "type": "production",
+      "used_by": ["apps/web/src/app/providers.tsx"],
+      "invocation": "require"
+    },
+    "zustand": {
+      "version": "^4.5.2",
+      "type": "production",
+      "used_by": [
+        "apps/web/src/stores/ui-store.ts",
+        "apps/web/src/stores/editor-store.ts",
+        "apps/web/src/stores/auth-store.ts"
+      ],
+      "invocation": "require"
+    },
+    "framer-motion": {
+      "version": "^11.0.24",
+      "type": "production",
+      "used_by": [],
+      "invocation": "implicit"
+    },
+    "socket.io": {
+      "version": "^4.7.5",
+      "type": "production",
+      "used_by": ["apps/api/src/index.ts"],
+      "invocation": "require"
+    },
+    "socket.io-client": {
+      "version": "^4.7.5",
+      "type": "production",
+      "used_by": ["apps/web/src/lib/socket/client.ts"],
+      "invocation": "require"
+    },
+    "@monaco-editor/react": {
+      "version": "^4.6.0",
+      "type": "production",
+      "used_by": [],
+      "invocation": "implicit"
+    },
+    "express": {
+      "version": "^4.19.2",
+      "type": "production",
+      "used_by": ["apps/api/src/index.ts"],
+      "invocation": "require"
+    },
+    "@trpc/server": {
+      "version": "^10.45.2",
+      "type": "production",
+      "used_by": ["apps/api/src/index.ts", "apps/api/src/trpc.ts"],
+      "invocation": "require"
+    },
+    "@prisma/client": {
+      "version": "^5.12.1",
+      "type": "production",
+      "used_by": ["apps/api/src/index.ts", "apps/api/src/services/submission-worker.ts"],
+      "invocation": "require"
+    },
+    "bullmq": {
+      "version": "^5.7.0",
+      "type": "production",
+      "used_by": ["apps/api/src/index.ts", "apps/api/src/services/submission-worker.ts"],
+      "invocation": "require"
+    },
+    "prisma": {
+      "version": "^5.12.1",
+      "type": "development",
+      "used_by": [],
+      "invocation": "npm run db:generate"
+    },
+    "zod": {
+      "version": "^3.22.4",
+      "type": "production",
+      "used_by": ["apps/api/src/trpc.ts"],
+      "invocation": "require"
+    },
+    "pino": {
+      "version": "^8.20.0",
+      "type": "production",
+      "used_by": [
+        "apps/api/src/index.ts",
+        "apps/api/src/services/ai-client.ts",
+        "apps/api/src/services/submission-worker.ts"
+      ],
+      "invocation": "require"
+    },
+    "@sentry/node": {
+      "version": "^7.109.0",
+      "type": "production",
+      "used_by": ["apps/api/src/index.ts"],
+      "invocation": "require"
+    },
+    "@sentry/nextjs": {
+      "version": "^7.109.0",
+      "type": "production",
+      "used_by": [
+        "apps/web/sentry.client.config.ts",
+        "apps/web/sentry.server.config.ts",
+        "apps/web/sentry.edge.config.ts"
+      ],
+      "invocation": "require"
+    },
+    "tailwindcss": {
+      "version": "^3.4.1",
+      "type": "development",
+      "used_by": [],
+      "invocation": "npm run dev"
+    },
+    "typescript": {
+      "version": "^5",
+      "type": "development",
+      "used_by": [],
+      "invocation": "npm run build"
+    },
+    "jest": {
+      "version": "(implicit, ts-jest)",
+      "type": "development",
+      "used_by": ["apps/api/src/__tests__/ai-client.test.ts"],
+      "invocation": "npm test"
+    },
+    "tsx": {
+      "version": "^4.7.2",
+      "type": "development",
+      "used_by": [],
+      "invocation": "npm run dev"
+    },
+    "@unvibe/types": {
+      "version": "workspace:*",
+      "type": "production",
+      "used_by": ["apps/api/src/index.ts", "apps/web/src/stores/"],
+      "invocation": "require"
+    },
+    "recharts": {
+      "version": "^2.12.3",
+      "type": "production",
+      "used_by": [],
+      "invocation": "implicit"
+    },
+    "lucide-react": {
+      "version": "^0.363.0",
+      "type": "production",
+      "used_by": [],
+      "invocation": "implicit"
+    }
+  }
+}

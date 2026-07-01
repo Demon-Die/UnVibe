@@ -7,9 +7,9 @@
  * Includes retry logic, timeouts, and structured logging via pino.
  */
 
-import pino from 'pino';
+import pino from "pino";
 
-const logger = pino({ name: 'ai-client' });
+const logger = pino({ name: "ai-client" });
 
 // ---------------------------------------------------------------------------
 // Types
@@ -68,7 +68,7 @@ export interface DiffResult {
 }
 
 export interface DefendMessage {
-  role: 'user' | 'assistant';
+  role: "user" | "assistant";
   content: string;
 }
 
@@ -97,7 +97,7 @@ export class AIClientError extends Error {
     public endpoint?: string,
   ) {
     super(message);
-    this.name = 'AIClientError';
+    this.name = "AIClientError";
   }
 }
 
@@ -111,7 +111,7 @@ export class AIClient {
   private readonly maxRetries: number;
 
   constructor(options?: { baseUrl?: string; timeoutMs?: number; maxRetries?: number }) {
-    this.baseUrl = options?.baseUrl ?? process.env.AI_SERVICE_URL ?? 'http://localhost:8000';
+    this.baseUrl = options?.baseUrl ?? process.env.AI_SERVICE_URL ?? "http://localhost:8000";
     this.timeoutMs = options?.timeoutMs ?? 10_000;
     this.maxRetries = options?.maxRetries ?? 2;
   }
@@ -126,11 +126,12 @@ export class AIClient {
       language: params.language,
       difficulty: params.difficulty,
     };
-    const data = await this.request<{ code: string; language: string; model_used: string; token_count: number }>(
-      'POST',
-      '/generate/',
-      body,
-    );
+    const data = await this.request<{
+      code: string;
+      language: string;
+      model_used: string;
+      token_count: number;
+    }>("POST", "/generate/", body);
     return {
       code: data.code,
       language: data.language,
@@ -150,7 +151,7 @@ export class AIClient {
       topic: params.topic,
       count: params.count,
     };
-    const data = await this.request<{ title: string; questions: any[] }>('POST', '/quiz/generate', body);
+    const data = await this.request<{ title: string; questions: any[] }>("POST", "/quiz/generate", body);
     return {
       title: data.title,
       questions: data.questions.map((q: any) => ({
@@ -174,7 +175,7 @@ export class AIClient {
       dimensions: Array<{ dimension: string; score: number; explanation: string }>;
       summary: string;
       clean_diff: string;
-    }>('POST', '/diff/', body);
+    }>("POST", "/diff/", body);
     return {
       overallScore: data.overall_score,
       dimensions: data.dimensions,
@@ -190,7 +191,7 @@ export class AIClient {
       passed: boolean;
       feedback: string | null;
       score: number | null;
-    }>('POST', '/defend/respond', body);
+    }>("POST", "/defend/respond", body);
     return {
       nextQuestion: data.next_question,
       passed: data.passed,
@@ -211,7 +212,7 @@ export class AIClient {
   async healthCheck(): Promise<boolean> {
     try {
       const res = await fetch(`${this.baseUrl}/health`, {
-        method: 'GET',
+        method: "GET",
         signal: AbortSignal.timeout(5_000),
       });
       return res.ok;
@@ -244,13 +245,13 @@ export class AIClient {
       try {
         const response = await fetch(url, {
           method,
-          headers: { 'Content-Type': 'application/json' },
+          headers: { "Content-Type": "application/json" },
           body: body ? JSON.stringify(body) : undefined,
           signal: AbortSignal.timeout(this.timeoutMs),
         });
 
         if (!response.ok) {
-          const errorBody = await response.text().catch(() => '');
+          const errorBody = await response.text().catch(() => "");
           throw new AIClientError(
             `AI service returned ${response.status}: ${errorBody || response.statusText}`,
             response.status,
@@ -259,20 +260,20 @@ export class AIClient {
         }
 
         const data = (await response.json()) as T;
-        logger.info({ endpoint: path, attempt: attempt + 1 }, 'AI service call succeeded');
+        logger.info({ endpoint: path, attempt: attempt + 1 }, "AI service call succeeded");
         return data;
       } catch (err) {
         lastError = err instanceof Error ? err : new Error(String(err));
 
         if (lastError instanceof AIClientError && lastError.statusCode && lastError.statusCode < 500) {
           // Client errors (4xx) should not be retried
-          logger.warn({ endpoint: path, status: lastError.statusCode }, 'Non-retryable AI client error');
+          logger.warn({ endpoint: path, status: lastError.statusCode }, "Non-retryable AI client error");
           throw lastError;
         }
 
         if (attempt < this.maxRetries) {
           const wait = 2 ** attempt * 500;
-          logger.warn({ endpoint: path, attempt: attempt + 1, wait }, 'Retrying AI service call');
+          logger.warn({ endpoint: path, attempt: attempt + 1, wait }, "Retrying AI service call");
           await new Promise((resolve) => setTimeout(resolve, wait));
         }
       }

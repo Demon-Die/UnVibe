@@ -4,20 +4,20 @@
 
 ### 1) Naming Rules
 
-| Item | Rule | Example | Evidence |
-|------|------|---------|----------|
-| Files (TypeScript) | kebab-case with lowercase | `providers.tsx`, `layout.tsx`, `globals.css`, `route.ts` | `apps/web/src/app/` directory listing |
-| Files (Python) | snake_case | `generate.py`, `quiz.py`, `defend.py`, `diff.py` | `apps/ai-service/app/routes/` directory listing |
-| Files (Config) | kebab-case | `docker-compose.yml`, `eslint.base.json`, `tsconfig.base.json` | Root directory listing |
-| Page components (Next.js) | Lowercase, `page.tsx` convention | `page.tsx` for homepage | `apps/web/src/app/page.tsx` |
-| Layout components (Next.js) | Lowercase, `layout.tsx` convention | `layout.tsx` for root layout | `apps/web/src/app/layout.tsx` |
-| Functions (TypeScript) | camelCase | `generateCode()`, `diffCode()`, `defendAsk()` | `apps/api/src/services/ai-client.ts` |
-| Functions (Python) | snake_case | `generate_async()`, `render_prompt()`, `strip_markdown_fence()`, `compare()`, `_count_nodes()` | `apps/ai-service/app/services/llm_client.py`, `prompt_manager.py`, `ast_differ.py` |
-| Classes (Python) | PascalCase | `LLMClient`, `LLMClientError`, `AstDiffer`, `PromptNotFoundError`, `DimensionScore`, `DiffResult` | `apps/ai-service/app/services/llm_client.py`, `ast_differ.py`, `prompt_manager.py` |
-| Types/interfaces (TypeScript) | PascalCase | `User`, `Track`, `Module`, `GenerateCodeResult`, `QuizResult`, `DiffResult`, `DefendResult`, `AIClientError` | `packages/types/src/index.ts`, `apps/api/src/services/ai-client.ts` |
-| Pydantic models (Python) | PascalCase (camel) | `GenerateRequest`, `GenerateResponse`, `QuizRequest`, `DiffRequest`, `DefendSessionRequest`, `DimensionScoreOut` | `apps/ai-service/app/routes/generate.py`, `quiz.py`, `diff.py`, `defend.py` |
-| Constants/env vars | UPPER_SNAKE_CASE | `DATABASE_URL`, `REDIS_URL`, `OPENROUTER_API_KEY`, `LLM_MODEL`, `MAX_QUESTIONS` | `.env.example`, `apps/ai-service/app/routes/defend.py` |
-| Branch naming | `feat/`, `fix/`, `chore/`, `docs/` prefix | `feat/your-feature-name` | `CONTRIBUTING.md` |
+| Item                          | Rule                                      | Example                                                                                                          | Evidence                                                                           |
+| ----------------------------- | ----------------------------------------- | ---------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| Files (TypeScript)            | kebab-case with lowercase                 | `providers.tsx`, `layout.tsx`, `globals.css`, `route.ts`                                                         | `apps/web/src/app/` directory listing                                              |
+| Files (Python)                | snake_case                                | `generate.py`, `quiz.py`, `defend.py`, `diff.py`                                                                 | `apps/ai-service/app/routes/` directory listing                                    |
+| Files (Config)                | kebab-case                                | `docker-compose.yml`, `eslint.base.json`, `tsconfig.base.json`                                                   | Root directory listing                                                             |
+| Page components (Next.js)     | Lowercase, `page.tsx` convention          | `page.tsx` for homepage                                                                                          | `apps/web/src/app/page.tsx`                                                        |
+| Layout components (Next.js)   | Lowercase, `layout.tsx` convention        | `layout.tsx` for root layout                                                                                     | `apps/web/src/app/layout.tsx`                                                      |
+| Functions (TypeScript)        | camelCase                                 | `generateCode()`, `diffCode()`, `defendAsk()`                                                                    | `apps/api/src/services/ai-client.ts`                                               |
+| Functions (Python)            | snake_case                                | `generate_async()`, `render_prompt()`, `strip_markdown_fence()`, `compare()`, `_count_nodes()`                   | `apps/ai-service/app/services/llm_client.py`, `prompt_manager.py`, `ast_differ.py` |
+| Classes (Python)              | PascalCase                                | `LLMClient`, `LLMClientError`, `AstDiffer`, `PromptNotFoundError`, `DimensionScore`, `DiffResult`                | `apps/ai-service/app/services/llm_client.py`, `ast_differ.py`, `prompt_manager.py` |
+| Types/interfaces (TypeScript) | PascalCase                                | `User`, `Track`, `Module`, `GenerateCodeResult`, `QuizResult`, `DiffResult`, `DefendResult`, `AIClientError`     | `packages/types/src/index.ts`, `apps/api/src/services/ai-client.ts`                |
+| Pydantic models (Python)      | PascalCase (camel)                        | `GenerateRequest`, `GenerateResponse`, `QuizRequest`, `DiffRequest`, `DefendSessionRequest`, `DimensionScoreOut` | `apps/ai-service/app/routes/generate.py`, `quiz.py`, `diff.py`, `defend.py`        |
+| Constants/env vars            | UPPER_SNAKE_CASE                          | `DATABASE_URL`, `REDIS_URL`, `OPENROUTER_API_KEY`, `LLM_MODEL`, `MAX_QUESTIONS`                                  | `.env.example`, `apps/ai-service/app/routes/defend.py`                             |
+| Branch naming                 | `feat/`, `fix/`, `chore/`, `docs/` prefix | `feat/your-feature-name`                                                                                         | `CONTRIBUTING.md`                                                                  |
 
 ### 2) Formatting and Linting
 

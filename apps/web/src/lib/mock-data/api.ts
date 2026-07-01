@@ -1,4 +1,13 @@
-import { annotations, blindspots, diffLines, leaderboard, quiz, radarData, tracks, warRoomMessages } from "./data";
+import {
+  annotations,
+  blindspots,
+  diffLines,
+  leaderboard,
+  quiz,
+  radarData,
+  tracks,
+  warRoomMessages,
+} from "./data";
 
 const wait = (ms = 240) => new Promise((resolve) => setTimeout(resolve, ms));
 

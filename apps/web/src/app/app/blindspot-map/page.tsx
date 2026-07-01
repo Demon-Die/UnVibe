@@ -14,14 +14,20 @@ export default function BlindspotMapPage() {
 
   return (
     <>
-      <PageHeader eyebrow="blindspot map" title="Weak concepts by evidence" description="A compact view of concepts that need another decode, rebuild, or defend pass." />
+      <PageHeader
+        eyebrow="blindspot map"
+        title="Weak concepts by evidence"
+        description="A compact view of concepts that need another decode, rebuild, or defend pass."
+      />
       <div className="grid gap-4">
         {blindspots.map((blindspot) => (
           <Card key={blindspot.id}>
             <CardHeader>
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <CardTitle>{blindspot.concept}</CardTitle>
-                <Badge variant={blindspot.severity > 70 ? "warning" : "secondary"}>{blindspot.severity}% risk</Badge>
+                <Badge variant={blindspot.severity > 70 ? "warning" : "secondary"}>
+                  {blindspot.severity}% risk
+                </Badge>
               </div>
             </CardHeader>
             <CardContent>

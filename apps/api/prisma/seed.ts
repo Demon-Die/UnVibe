@@ -6,22 +6,19 @@ const TRACKS = [
   {
     id: "track-frontend-systems",
     title: "Frontend Systems",
-    description:
-      "Master React component architecture, state management, and modern CSS patterns.",
+    description: "Master React component architecture, state management, and modern CSS patterns.",
     published: true,
     modules: [
       {
         id: "mod-react-state",
         title: "React State Management",
-        content:
-          "Learn useState, useReducer, Context, and Zustand patterns.",
+        content: "Learn useState, useReducer, Context, and Zustand patterns.",
         order: 1,
       },
       {
         id: "mod-css-layout",
         title: "CSS Layout Mastery",
-        content:
-          "Deep dive into Flexbox, Grid, and responsive design patterns.",
+        content: "Deep dive into Flexbox, Grid, and responsive design patterns.",
         order: 2,
       },
     ],
@@ -29,22 +26,19 @@ const TRACKS = [
   {
     id: "track-ai-workflows",
     title: "AI Workflows",
-    description:
-      "Build AI-powered features with LLM chains, RAG pipelines, and agent patterns.",
+    description: "Build AI-powered features with LLM chains, RAG pipelines, and agent patterns.",
     published: true,
     modules: [
       {
         id: "mod-prompt-eng",
         title: "Prompt Engineering",
-        content:
-          "Craft effective prompts for code generation and analysis tasks.",
+        content: "Craft effective prompts for code generation and analysis tasks.",
         order: 1,
       },
       {
         id: "mod-rag-pipeline",
         title: "RAG Pipeline Design",
-        content:
-          "Build retrieval-augmented generation pipelines from scratch.",
+        content: "Build retrieval-augmented generation pipelines from scratch.",
         order: 2,
       },
     ],
@@ -52,15 +46,13 @@ const TRACKS = [
   {
     id: "track-backend-foundations",
     title: "Backend Foundations",
-    description:
-      "Design APIs, manage databases, and orchestrate microservices with production patterns.",
+    description: "Design APIs, manage databases, and orchestrate microservices with production patterns.",
     published: false,
     modules: [
       {
         id: "mod-api-design",
         title: "API Design Patterns",
-        content:
-          "Design RESTful and tRPC APIs with validation and error handling.",
+        content: "Design RESTful and tRPC APIs with validation and error handling.",
         order: 1,
       },
     ],

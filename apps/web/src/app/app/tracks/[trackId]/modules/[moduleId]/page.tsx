@@ -17,9 +17,22 @@ export default function ModulePage({ params }: { params: { trackId: string; modu
         eyebrow={data.track.title}
         title={data.module.title}
         description={data.module.summary}
-        action={<div className="flex flex-wrap gap-2">{data.module.concepts.map((item) => <Badge key={item} variant="secondary">{item}</Badge>)}</div>}
+        action={
+          <div className="flex flex-wrap gap-2">
+            {data.module.concepts.map((item) => (
+              <Badge key={item} variant="secondary">
+                {item}
+              </Badge>
+            ))}
+          </div>
+        }
       />
-      <ModulePlayer module={data.module} annotations={data.annotations} quiz={data.quiz} diffLines={data.diffLines} />
+      <ModulePlayer
+        module={data.module}
+        annotations={data.annotations}
+        quiz={data.quiz}
+        diffLines={data.diffLines}
+      />
     </>
   );
 }

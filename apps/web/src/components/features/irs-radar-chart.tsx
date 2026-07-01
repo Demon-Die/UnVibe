@@ -14,7 +14,12 @@ export function IRSRadarChart({ data }: { data: Array<{ subject: string; score: 
           <RadarChart data={data}>
             <PolarGrid stroke="hsl(var(--border))" />
             <PolarAngleAxis dataKey="subject" tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }} />
-            <Radar dataKey="score" stroke="hsl(var(--primary))" fill="hsl(var(--primary))" fillOpacity={0.28} />
+            <Radar
+              dataKey="score"
+              stroke="hsl(var(--primary))"
+              fill="hsl(var(--primary))"
+              fillOpacity={0.28}
+            />
           </RadarChart>
         </ResponsiveContainer>
       </CardContent>

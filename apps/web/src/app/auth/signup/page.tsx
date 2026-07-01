@@ -15,7 +15,9 @@ export default function SignUpPage() {
       <Card className="w-full max-w-md bg-card/95 backdrop-blur">
         <CardHeader>
           <Link href="/" className="mb-6 flex items-center gap-3">
-            <span className="flex h-9 w-9 items-center justify-center rounded-md bg-primary/15 font-mono text-sm font-semibold text-primary">UV</span>
+            <span className="flex h-9 w-9 items-center justify-center rounded-md bg-primary/15 font-mono text-sm font-semibold text-primary">
+              UV
+            </span>
             <span className="font-semibold">UnVibe</span>
           </Link>
           <CardTitle className="text-2xl">Create account</CardTitle>
@@ -38,7 +40,10 @@ export default function SignUpPage() {
             </Button>
           </div>
           <p className="pt-2 text-center text-sm text-muted-foreground">
-            Already training? <Link className="text-primary" href="/auth/signin">Sign in</Link>
+            Already training?{" "}
+            <Link className="text-primary" href="/auth/signin">
+              Sign in
+            </Link>
           </p>
         </CardContent>
       </Card>

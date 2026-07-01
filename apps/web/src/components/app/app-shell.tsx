@@ -42,7 +42,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 href={item.href}
                 className={cn(
                   "flex items-center gap-3 rounded-md px-3 py-2 text-sm text-muted-foreground transition hover:bg-muted hover:text-foreground",
-                  active && "bg-primary/10 text-primary"
+                  active && "bg-primary/10 text-primary",
                 )}
               >
                 <Icon className="h-4 w-4" />
@@ -59,7 +59,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <span className="font-semibold">UnVibe</span>
           </div>
           <div className="hidden lg:block">
-            <p className="font-mono text-xs uppercase tracking-[0.22em] text-muted-foreground">mock workspace</p>
+            <p className="font-mono text-xs uppercase tracking-[0.22em] text-muted-foreground">
+              mock workspace
+            </p>
           </div>
           <div className="flex items-center gap-2">
             <ThemeController />
@@ -67,7 +69,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               <p className="text-sm font-medium">{user?.name ?? "Guest"}</p>
               <p className="text-xs text-muted-foreground">{user?.email ?? "mock session"}</p>
             </div>
-            <Button variant="outline" size="sm" onClick={signOut}>Sign out</Button>
+            <Button variant="outline" size="sm" onClick={signOut}>
+              Sign out
+            </Button>
           </div>
         </header>
         <main className="mx-auto w-full max-w-7xl px-4 py-6 pb-24 sm:px-6 lg:py-8">{children}</main>
@@ -81,7 +85,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 href={item.href}
                 className={cn(
                   "flex flex-col items-center gap-1 rounded-md px-2 py-2 text-[11px] text-muted-foreground",
-                  active && "bg-primary/10 text-primary"
+                  active && "bg-primary/10 text-primary",
                 )}
               >
                 <Icon className="h-4 w-4" />

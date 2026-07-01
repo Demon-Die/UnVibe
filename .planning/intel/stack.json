@@ -1,0 +1,28 @@
+{
+  "_meta": {
+    "updated_at": "2026-06-30T22:30:00.000Z",
+    "version": 1
+  },
+  "languages": ["TypeScript", "Python", "JavaScript"],
+  "frameworks": ["Next.js 14 (App Router)", "Express", "FastAPI", "tRPC", "Socket.io"],
+  "tools": [
+    "Turborepo",
+    "Prisma ORM",
+    "BullMQ",
+    "Zustand",
+    "React Query",
+    "pino",
+    "Zod",
+    "Sentry",
+    "Docker Compose"
+  ],
+  "build_system": "Turborepo v2 pipeline (pnpm workspaces)",
+  "test_framework": "pytest (Python, 28 tests), Jest with ts-jest (TypeScript, 12 tests)",
+  "package_manager": "pnpm 10.18.0 (JS monorepo), pip (Python AI service)",
+  "content_formats": [
+    "Markdown (prompt templates, docs)",
+    "JSON (API payloads, config, quiz data)",
+    "Prisma schema (data models)",
+    "YAML (docker-compose, CI workflows)"
+  ]
+}
