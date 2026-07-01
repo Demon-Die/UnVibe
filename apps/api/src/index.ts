@@ -13,6 +13,8 @@ import { createContext } from "./context";
 import { createSubmissionWorker } from "./services/submission-worker";
 import { authRouter } from "./routers/auth";
 import { tracksRouter } from "./routers/tracks";
+import { modulesRouter } from "./routers/modules";
+import { irsRouter } from "./routers/irs";
 import { warRoomRouter } from "./routers/warRoom";
 import dotenv from "dotenv";
 
@@ -119,6 +121,8 @@ const appRouter = router({
   }),
   auth: authRouter,
   tracks: tracksRouter,
+  modules: modulesRouter,
+  irs: irsRouter,
   warRoom: warRoomRouter,
 });
 
