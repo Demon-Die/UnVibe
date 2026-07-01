@@ -16,6 +16,7 @@ import { tracksRouter } from "./routers/tracks";
 import { modulesRouter } from "./routers/modules";
 import { irsRouter } from "./routers/irs";
 import { warRoomRouter } from "./routers/warRoom";
+import { submissionsRouter } from "./routers/submissions";
 import dotenv from "dotenv";
 
 dotenv.config({ path: "../../.env" });
@@ -122,6 +123,7 @@ const appRouter = router({
   auth: authRouter,
   tracks: tracksRouter,
   modules: modulesRouter,
+  submissions: submissionsRouter,
   irs: irsRouter,
   warRoom: warRoomRouter,
 });
