@@ -162,7 +162,7 @@ if (process.env.SENTRY_DSN_API) {
   app.use(Sentry.Handlers.errorHandler());
 }
 
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 3001;
 httpServer.listen(PORT, () => {
   logger.info(`Express API server running on port ${PORT}`);
 });

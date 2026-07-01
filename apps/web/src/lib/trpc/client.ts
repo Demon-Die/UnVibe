@@ -1,4 +1,4 @@
-export const trpcEndpoint = `${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000"}/trpc`;
+export const trpcEndpoint = `${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001"}/trpc`;
 
 export async function callTrpcHealth() {
   const response = await fetch(`${trpcEndpoint}/health`, {
