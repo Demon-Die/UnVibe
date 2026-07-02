@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Github, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { useAuthStore } from "@/stores/auth-store";
 
 export default function SignUpPage() {
+  const router = useRouter();
   const { signIn } = useAuthStore();
 
   return (
@@ -33,8 +35,9 @@ export default function SignUpPage() {
           <div className="grid gap-2 pt-3">
             <Input placeholder="Your name" />
             <Input placeholder="email@company.com" type="email" />
-            <Button asChild onClick={signIn}>
-              <Link href="/app/dashboard">Create mock account</Link>
+            {/* TODO: when wired to real NextAuth signIn(), this becomes async and may handle its own redirect via callbackUrl — revisit the router.push() call then. */}
+            <Button onClick={() => { signIn(); router.push('/app/dashboard'); }}>
+              Create mock account
             </Button>
           </div>
           <p className="pt-2 text-center text-sm text-muted-foreground">
