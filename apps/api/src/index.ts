@@ -18,6 +18,7 @@ import { irsRouter } from "./routers/irs";
 import { warRoomRouter } from "./routers/warRoom";
 import { submissionsRouter } from "./routers/submissions";
 import { profileRouter } from "./routers/profile";
+import { judge0Router } from "./routers/judge0";
 import dotenv from "dotenv";
 
 dotenv.config({ path: "../../.env" });
@@ -128,6 +129,7 @@ const appRouter = router({
   irs: irsRouter,
   warRoom: warRoomRouter,
   profile: profileRouter,
+  judge0: judge0Router,
 });
 
 export type AppRouter = typeof appRouter;
