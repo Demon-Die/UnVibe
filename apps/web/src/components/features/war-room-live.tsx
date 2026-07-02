@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import type { LeaderboardEntry, WarRoomMessage } from "@/lib/mock-data/types";
-import { getSocket } from "@/lib/socket/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -13,7 +12,7 @@ export function WarRoomLive({ messages: initialMessages, leaderboard }: { messag
   const [draft, setDraft] = useState("");
 
   useEffect(() => {
-    const socket = getSocket();
+    // TODO: wire real socket events once War Room backend lands
     const timer = window.setInterval(() => {
       setMessages((items) => [
         ...items.slice(-5),
@@ -27,10 +26,8 @@ export function WarRoomLive({ messages: initialMessages, leaderboard }: { messag
       ]);
     }, 6000);
 
-    socket.connect();
     return () => {
       window.clearInterval(timer);
-      socket.disconnect();
     };
   }, []);
 
