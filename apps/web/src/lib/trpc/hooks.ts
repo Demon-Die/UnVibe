@@ -3,14 +3,7 @@
 import { trpc } from "./client";
 
 /**
- * tRPC-powered query hooks that parallel the mock-data hooks.
- *
- * These are placeholder implementations that will be replaced with real
- * router calls once the API routers are built in Phase 2b.
- *
- * Usage in Phase 3 (frontend swap):
- *   import { useDashboardData } from "@/lib/trpc/hooks";
- *   // replaces: import { useDashboardQuery } from "@/lib/mock-data/hooks";
+ * tRPC-powered query hooks that parallel the original mock-data hooks.
  */
 
 export function useDashboardData() {

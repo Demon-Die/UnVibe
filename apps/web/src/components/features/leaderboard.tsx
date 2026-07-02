@@ -1,4 +1,4 @@
-import type { LeaderboardEntry } from "@/lib/mock-data/types";
+import type { LeaderboardEntry } from "@unvibe/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 

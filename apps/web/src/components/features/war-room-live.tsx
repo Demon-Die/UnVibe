@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { LeaderboardEntry, WarRoomMessage } from "@/lib/mock-data/types";
+import type { LeaderboardEntry, WarRoomMessage } from "@unvibe/types";
 import { getSocket } from "@/lib/socket/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

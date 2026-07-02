@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { BookOpenCheck, Brain, MessageSquareQuote } from "lucide-react";
-import type { Annotation, DiffLine, MockModule, QuizQuestion } from "@/lib/mock-data/types";
+import type { Annotation, DiffLine, MockModule, QuizQuestion } from "@unvibe/types";
 import { useEditorStore } from "@/stores/editor-store";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";

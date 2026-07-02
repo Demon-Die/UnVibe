@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import type { QuizQuestion } from "@/lib/mock-data/types";
+import type { QuizQuestion } from "@unvibe/types";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 

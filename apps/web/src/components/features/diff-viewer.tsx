@@ -1,4 +1,4 @@
-import type { DiffLine } from "@/lib/mock-data/types";
+import type { DiffLine } from "@unvibe/types";
 import { cn } from "@/lib/utils";
 
 export function DiffViewer({ lines }: { lines: DiffLine[] }) {

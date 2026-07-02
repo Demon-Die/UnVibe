@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import type { Annotation } from "@/lib/mock-data/types";
+import type { Annotation } from "@unvibe/types";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
