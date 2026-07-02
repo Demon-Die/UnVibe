@@ -31,6 +31,9 @@ export const authRouter = router({
         const valid = await bcrypt.compare(input.password, user.passwordHash);
         if (!valid)
           throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid password" });
+      } else {
+        // OAuth-only user has no password set; cannot use email/password sign-in
+        throw new TRPCError({ code: "UNAUTHORIZED", message: "This account uses OAuth. Sign in with GitHub or Google." });
       }
 
       const sessionToken = generateSessionToken();
