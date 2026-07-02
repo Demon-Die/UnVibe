@@ -45,23 +45,23 @@ None — plan executed exactly as written.
 
 ## Key Decisions
 
-| Decision | Rationale |
-|----------|-----------|
+| Decision                                                  | Rationale                                                                             |
+| --------------------------------------------------------- | ------------------------------------------------------------------------------------- |
 | Namespaced child routers (`auth:`, `tracks:`, `warRoom:`) | Reduces naming collisions, self-documenting access pattern (`trpc.auth.getSession()`) |
-| `signOut` deletes the Session record | Matches Auth.js expected behavior — invalidates the server-side session |
-| `getLeaderboard` reads `IRSScore` model | Already seeded with IRS data; no separate leaderboard table needed |
-| `getMessages` returns empty array | Socket.io handles real-time messaging; tRPC endpoint exists for REST convenience |
-| `getProgress` aggregates via `reduce` over submissions | No separate progress tracking table — computed on-demand from Submission records |
+| `signOut` deletes the Session record                      | Matches Auth.js expected behavior — invalidates the server-side session               |
+| `getLeaderboard` reads `IRSScore` model                   | Already seeded with IRS data; no separate leaderboard table needed                    |
+| `getMessages` returns empty array                         | Socket.io handles real-time messaging; tRPC endpoint exists for REST convenience      |
+| `getProgress` aggregates via `reduce` over submissions    | No separate progress tracking table — computed on-demand from Submission records      |
 
 ## Task Completion
 
-| Task | Name | Status | Commit |
-|------|------|--------|--------|
-| 1 | auth.ts router | ✅ | `0e5ad3b` |
-| 2 | tracks.ts router | ✅ | `a7eabf5` |
-| 3 | warRoom.ts router | ✅ | `e13b7aa` |
-| 4 | index.ts router registration | ✅ | `160e996` |
-| 5 | context.ts sessionToken fix | ✅ | `afb0924` |
+| Task | Name                         | Status | Commit    |
+| ---- | ---------------------------- | ------ | --------- |
+| 1    | auth.ts router               | ✅     | `0e5ad3b` |
+| 2    | tracks.ts router             | ✅     | `a7eabf5` |
+| 3    | warRoom.ts router            | ✅     | `e13b7aa` |
+| 4    | index.ts router registration | ✅     | `160e996` |
+| 5    | context.ts sessionToken fix  | ✅     | `afb0924` |
 
 ## Commits
 
@@ -75,12 +75,12 @@ afb0924 feat(api): add sessionToken to Session type for signOut support
 
 ## Verification Results
 
-| Check | Result |
-|-------|--------|
-| `pnpm --filter=api exec tsc --noEmit` | ✅ Passed |
+| Check                                 | Result                                     |
+| ------------------------------------- | ------------------------------------------ |
+| `pnpm --filter=api exec tsc --noEmit` | ✅ Passed                                  |
 | `pnpm --filter=web exec tsc --noEmit` | ✅ Passed (AppRouter type flows correctly) |
-| `pnpm lint` | ✅ Passed |
-| `git status --short` | ✅ Clean (no modified files) |
+| `pnpm lint`                           | ✅ Passed                                  |
+| `git status --short`                  | ✅ Clean (no modified files)               |
 
 ## Known Stubs
 

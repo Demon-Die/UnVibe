@@ -46,10 +46,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
       const json = await res.json();
       if (json?.result?.data?.user) {
         set({ user: json.result.data.user });
-        localStorage.setItem(
-          "unvibe_session",
-          JSON.stringify(json.result.data.user),
-        );
+        localStorage.setItem("unvibe_session", JSON.stringify(json.result.data.user));
       } else {
         set({ user: null });
         localStorage.removeItem("unvibe_session");
@@ -68,10 +65,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
       const json = await res.json();
       if (json?.result?.data?.user) {
         set({ user: json.result.data.user });
-        localStorage.setItem(
-          "unvibe_session",
-          JSON.stringify(json.result.data.user),
-        );
+        localStorage.setItem("unvibe_session", JSON.stringify(json.result.data.user));
         return true;
       }
       return false;
@@ -93,10 +87,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
       const json = await res.json();
       if (json?.result?.data?.user) {
         set({ user: json.result.data.user });
-        localStorage.setItem(
-          "unvibe_session",
-          JSON.stringify(json.result.data.user),
-        );
+        localStorage.setItem("unvibe_session", JSON.stringify(json.result.data.user));
         return true;
       }
       return false;

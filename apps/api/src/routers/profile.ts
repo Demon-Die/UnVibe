@@ -111,9 +111,7 @@ export const profileRouter = router({
 
     let currentStreak = 0;
     if (lastSubmission) {
-      const daysSince = Math.floor(
-        (Date.now() - lastSubmission.createdAt.getTime()) / (1000 * 60 * 60 * 24),
-      );
+      const daysSince = Math.floor((Date.now() - lastSubmission.createdAt.getTime()) / (1000 * 60 * 60 * 24));
       currentStreak = daysSince <= 1 ? 1 : 0;
     }
 

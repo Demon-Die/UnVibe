@@ -16,19 +16,16 @@ export const tracksRouter = router({
     }));
   }),
 
-  getById: publicProcedure
-    .input(z.object({ id: z.string() }))
-    .query(async ({ ctx, input }) => {
-      const track = await ctx.prisma.track.findUnique({
-        where: { id: input.id },
-        include: {
-          modules: { orderBy: { order: "asc" } },
-        },
-      });
-      if (!track)
-        throw new TRPCError({ code: "NOT_FOUND", message: "Track not found" });
-      return track;
-    }),
+  getById: publicProcedure.input(z.object({ id: z.string() })).query(async ({ ctx, input }) => {
+    const track = await ctx.prisma.track.findUnique({
+      where: { id: input.id },
+      include: {
+        modules: { orderBy: { order: "asc" } },
+      },
+    });
+    if (!track) throw new TRPCError({ code: "NOT_FOUND", message: "Track not found" });
+    return track;
+  }),
 
   getProgress: protectedProcedure.query(async ({ ctx }) => {
     // Count completed submissions per track
@@ -45,8 +42,7 @@ export const tracksRouter = router({
       progress: track.modules.reduce(
         (acc, mod) => {
           const sub = submissions.find((s) => s.moduleId === mod.id);
-          if (sub?.status === "scored" || sub?.status === "defended")
-            acc.completed++;
+          if (sub?.status === "scored" || sub?.status === "defended") acc.completed++;
           if (sub) acc.started++;
           return acc;
         },

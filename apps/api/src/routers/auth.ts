@@ -3,16 +3,13 @@ import { TRPCError } from "@trpc/server";
 import { publicProcedure, protectedProcedure, router } from "../trpc";
 
 export const authRouter = router({
-  signIn: publicProcedure
-    .input(z.object({ email: z.string().email() }))
-    .query(async ({ ctx, input }) => {
-      const user = await ctx.prisma.user.findUnique({
-        where: { email: input.email },
-      });
-      if (!user)
-        throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
-      return { user };
-    }),
+  signIn: publicProcedure.input(z.object({ email: z.string().email() })).query(async ({ ctx, input }) => {
+    const user = await ctx.prisma.user.findUnique({
+      where: { email: input.email },
+    });
+    if (!user) throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
+    return { user };
+  }),
 
   signUp: publicProcedure
     .input(

@@ -18,8 +18,7 @@ export const submissionsRouter = router({
       const module = await ctx.prisma.module.findUnique({
         where: { id: input.moduleId },
       });
-      if (!module)
-        throw new TRPCError({ code: "NOT_FOUND", message: "Module not found" });
+      if (!module) throw new TRPCError({ code: "NOT_FOUND", message: "Module not found" });
 
       // Create submission with pending status
       const submission = await ctx.prisma.submission.create({
@@ -77,33 +76,29 @@ export const submissionsRouter = router({
       }));
     }),
 
-  getById: protectedProcedure
-    .input(z.object({ id: z.string() }))
-    .query(async ({ ctx, input }) => {
-      const submission = await ctx.prisma.submission.findUnique({
-        where: { id: input.id },
-        include: { module: { select: { title: true, content: true } } },
+  getById: protectedProcedure.input(z.object({ id: z.string() })).query(async ({ ctx, input }) => {
+    const submission = await ctx.prisma.submission.findUnique({
+      where: { id: input.id },
+      include: { module: { select: { title: true, content: true } } },
+    });
+
+    if (!submission)
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "Submission not found",
       });
+    if (submission.userId !== ctx.session.user.id) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "Not your submission",
+      });
+    }
 
-      if (!submission)
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Submission not found",
-        });
-      if (submission.userId !== ctx.session.user.id) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message: "Not your submission",
-        });
-      }
-
-      return {
-        ...submission,
-        parsedFeedback: submission.feedback
-          ? tryParseFeedback(submission.feedback)
-          : null,
-      };
-    }),
+    return {
+      ...submission,
+      parsedFeedback: submission.feedback ? tryParseFeedback(submission.feedback) : null,
+    };
+  }),
 });
 
 function tryParseFeedback(feedback: string): unknown {

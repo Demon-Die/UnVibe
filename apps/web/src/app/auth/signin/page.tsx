@@ -61,9 +61,7 @@ export default function SignInPage() {
               onChange={(e) => setEmail(e.target.value)}
             />
             {error && <p className="text-sm text-destructive">{error}</p>}
-            <Button onClick={handleSignIn}>
-              Sign in
-            </Button>
+            <Button onClick={handleSignIn}>Sign in</Button>
           </div>
           <p className="pt-2 text-center text-sm text-muted-foreground">
             New here?{" "}

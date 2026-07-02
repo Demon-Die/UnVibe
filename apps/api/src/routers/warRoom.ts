@@ -7,8 +7,7 @@ export const warRoomRouter = router({
     const room = await ctx.prisma.warRoom.findFirst({
       orderBy: { createdAt: "desc" },
     });
-    if (!room)
-      throw new TRPCError({ code: "NOT_FOUND", message: "No active war room" });
+    if (!room) throw new TRPCError({ code: "NOT_FOUND", message: "No active war room" });
     return room;
   }),
 
@@ -35,15 +34,12 @@ export const warRoomRouter = router({
     }));
   }),
 
-  joinRoom: protectedProcedure
-    .input(z.object({ roomId: z.string() }))
-    .mutation(async ({ ctx, input }) => {
-      const room = await ctx.prisma.warRoom.findUnique({
-        where: { id: input.roomId },
-      });
-      if (!room)
-        throw new TRPCError({ code: "NOT_FOUND", message: "Room not found" });
-      // Socket.io handles the actual join — this is a REST-style check
-      return { room, success: true };
-    }),
+  joinRoom: protectedProcedure.input(z.object({ roomId: z.string() })).mutation(async ({ ctx, input }) => {
+    const room = await ctx.prisma.warRoom.findUnique({
+      where: { id: input.roomId },
+    });
+    if (!room) throw new TRPCError({ code: "NOT_FOUND", message: "Room not found" });
+    // Socket.io handles the actual join — this is a REST-style check
+    return { room, success: true };
+  }),
 });

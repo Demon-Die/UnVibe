@@ -14,60 +14,60 @@ The routers are implemented in parallel waves: Wave 1 (auth + tracks) first beca
 
 ## Phase Requirements
 
-| ID | Description | Research Support |
-|----|-------------|------------------|
-| AUTH-01 | Sign-in/sign-up public procedures | Auth router uses `publicProcedure` for signIn/signUp; Zod validates email format; session token generation via Prisma `Session.create()` |
-| AUTH-02 | Session management | `getSession` uses `protectedProcedure` which already reads `ctx.session` from context.ts; `signOut` deletes Session record |
-| TRACKS-01 | Public track listing | `tracks.getAll` uses Prisma `findMany` with `where: { published: true }`; module count via `_count: { select: { modules: true } }` |
-| TRACKS-02 | Track progress tracking | `tracks.getProgress` joins Submission and IRSScore; requires auth (protectedProcedure) |
-| MODULES-01 | Module content publicly readable | `modules.getById` and `modules.getContent` use publicProcedure; content is the code-to-rebuild |
+| ID         | Description                            | Research Support                                                                                                                                    |
+| ---------- | -------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| AUTH-01    | Sign-in/sign-up public procedures      | Auth router uses `publicProcedure` for signIn/signUp; Zod validates email format; session token generation via Prisma `Session.create()`            |
+| AUTH-02    | Session management                     | `getSession` uses `protectedProcedure` which already reads `ctx.session` from context.ts; `signOut` deletes Session record                          |
+| TRACKS-01  | Public track listing                   | `tracks.getAll` uses Prisma `findMany` with `where: { published: true }`; module count via `_count: { select: { modules: true } }`                  |
+| TRACKS-02  | Track progress tracking                | `tracks.getProgress` joins Submission and IRSScore; requires auth (protectedProcedure)                                                              |
+| MODULES-01 | Module content publicly readable       | `modules.getById` and `modules.getContent` use publicProcedure; content is the code-to-rebuild                                                      |
 | MODULES-02 | Submission creation with async scoring | `modules.submitDecode` creates `Submission` record with `status: 'pending'`, enqueues BullMQ job with submissionId; returns immediately for polling |
-| SUBS-01 | Submission history | `submissions.getHistory` queries by userId with optional moduleId filter |
-| SUBS-02 | Polling for scored results | `submissions.getById` returns feedback when status is 'scored' or 'failed' |
-| IRS-01 | IRS score reading | `irs.getScore` reads latest `IRSScore` record for user; recalculation happens in worker |
-| IRS-02 | Blindspots identification | `irs.getBlindspots` analyzes low-scored submissions to identify weak concepts |
-| WARROOM-01 | Room CRUD | `warRoom.getRoom`/`getMessages`/`getLeaderboard` are public; `joinRoom` is protected |
-| PROFILE-01 | Aggregate user data | `profile.getProfile` joins User + Submission + IRSScore + DefendSession |
-| PROFILE-02 | Stats computation | `profile.getStats` computes completed modules, total submissions, avg score, streak |
+| SUBS-01    | Submission history                     | `submissions.getHistory` queries by userId with optional moduleId filter                                                                            |
+| SUBS-02    | Polling for scored results             | `submissions.getById` returns feedback when status is 'scored' or 'failed'                                                                          |
+| IRS-01     | IRS score reading                      | `irs.getScore` reads latest `IRSScore` record for user; recalculation happens in worker                                                             |
+| IRS-02     | Blindspots identification              | `irs.getBlindspots` analyzes low-scored submissions to identify weak concepts                                                                       |
+| WARROOM-01 | Room CRUD                              | `warRoom.getRoom`/`getMessages`/`getLeaderboard` are public; `joinRoom` is protected                                                                |
+| PROFILE-01 | Aggregate user data                    | `profile.getProfile` joins User + Submission + IRSScore + DefendSession                                                                             |
+| PROFILE-02 | Stats computation                      | `profile.getStats` computes completed modules, total submissions, avg score, streak                                                                 |
 
 ## Architectural Responsibility Map
 
-| Capability | Primary Tier | Secondary Tier | Rationale |
-|------------|-------------|----------------|-----------|
-| Auth sign-in/sign-up | API (tRPC) | — | Creates/reads Session records in DB; cannot be client-side |
-| Session validation | API (context.ts) | — | Already implemented in Phase 1's `createContext`; routers consume `ctx.session` |
-| Track listing | API (tRPC) | — | Reads from Prisma; public data |
-| Module content | API (tRPC) | — | Reads from Prisma; public content |
-| Submission creation | API (tRPC) + BullMQ | — | tRPC creates record, BullMQ worker scores asynchronously |
-| IRS score aggregation | API (submission-worker.ts) | tRPC reads result | Worker recalculates; tRPC reads latest IRSScore |
-| War Room messaging | Socket.io (real-time) | tRPC (CRUD) | Socket.io handles live; tRPC handles RESTful CRUD |
-| Profile aggregation | API (tRPC) | — | Reads from User, Submission, IRSScore, DefendSession |
+| Capability            | Primary Tier               | Secondary Tier    | Rationale                                                                       |
+| --------------------- | -------------------------- | ----------------- | ------------------------------------------------------------------------------- |
+| Auth sign-in/sign-up  | API (tRPC)                 | —                 | Creates/reads Session records in DB; cannot be client-side                      |
+| Session validation    | API (context.ts)           | —                 | Already implemented in Phase 1's `createContext`; routers consume `ctx.session` |
+| Track listing         | API (tRPC)                 | —                 | Reads from Prisma; public data                                                  |
+| Module content        | API (tRPC)                 | —                 | Reads from Prisma; public content                                               |
+| Submission creation   | API (tRPC) + BullMQ        | —                 | tRPC creates record, BullMQ worker scores asynchronously                        |
+| IRS score aggregation | API (submission-worker.ts) | tRPC reads result | Worker recalculates; tRPC reads latest IRSScore                                 |
+| War Room messaging    | Socket.io (real-time)      | tRPC (CRUD)       | Socket.io handles live; tRPC handles RESTful CRUD                               |
+| Profile aggregation   | API (tRPC)                 | —                 | Reads from User, Submission, IRSScore, DefendSession                            |
 
 ## Standard Stack
 
 ### Core
 
-| Library | Version | Purpose | Why Standard |
-|---------|---------|---------|--------------|
-| `@trpc/server` | ^10.45.2 | tRPC server framework | Already in API's package.json; provides router(), publicProcedure, middleware, createCallerFactory |
-| `zod` | ^3.22.4 | Input validation | Already in API's package.json; tRPC's default validator; provides `.input()` schema inference |
-| `@prisma/client` | ^5.12.1 | Database queries | Already in API's package.json; ctx.prisma provides typed access to all 9 models |
-| `bullmq` | ^5.7.0 | Async job queue | Already in API's package.json; submissionQueue is injected in ctx |
+| Library          | Version  | Purpose               | Why Standard                                                                                       |
+| ---------------- | -------- | --------------------- | -------------------------------------------------------------------------------------------------- |
+| `@trpc/server`   | ^10.45.2 | tRPC server framework | Already in API's package.json; provides router(), publicProcedure, middleware, createCallerFactory |
+| `zod`            | ^3.22.4  | Input validation      | Already in API's package.json; tRPC's default validator; provides `.input()` schema inference      |
+| `@prisma/client` | ^5.12.1  | Database queries      | Already in API's package.json; ctx.prisma provides typed access to all 9 models                    |
+| `bullmq`         | ^5.7.0   | Async job queue       | Already in API's package.json; submissionQueue is injected in ctx                                  |
 
 ### Supporting
 
-| Library | Version | Purpose | When to Use |
-|---------|---------|---------|-------------|
-| `ts-jest` | ^29.x | Test runner | Already configured in `jest.config.ts` for testing routers with createCallerFactory |
-| `jest` | ^29.x | Test framework | Already configured; testMatch: `**/__tests__/**/*.test.ts` |
+| Library   | Version | Purpose        | When to Use                                                                         |
+| --------- | ------- | -------------- | ----------------------------------------------------------------------------------- |
+| `ts-jest` | ^29.x   | Test runner    | Already configured in `jest.config.ts` for testing routers with createCallerFactory |
+| `jest`    | ^29.x   | Test framework | Already configured; testMatch: `**/__tests__/**/*.test.ts`                          |
 
 ### Alternatives Considered
 
-| Instead of | Could Use | Tradeoff |
-|------------|-----------|----------|
+| Instead of                                   | Could Use                     | Tradeoff                                                                                                                                                            |
+| -------------------------------------------- | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Child routers (router({ auth: authRouter })) | mergeRouters() flat namespace | Child routers are accessed as `trpc.auth.getSession()` vs flat `trpc.getSession()`; hierarchical namespacing reduces naming collisions and is more self-documenting |
-| Inline routers in index.ts | Separate router files | Separate files keep each router under 100 lines; easier to test independently |
-| tRPC v11 | tRPC v10 | v11 uses `@trpc/tanstack-react-query` with different API; upgrading both API and web would be scope creep |
+| Inline routers in index.ts                   | Separate router files         | Separate files keep each router under 100 lines; easier to test independently                                                                                       |
+| tRPC v11                                     | tRPC v10                      | v11 uses `@trpc/tanstack-react-query` with different API; upgrading both API and web would be scope creep                                                           |
 
 **Installation:** No new packages needed — all dependencies are already in `apps/api/package.json`.
 
@@ -162,6 +162,7 @@ apps/api/src/
 **When to use:** For every Phase 2 router. This is the standard tRPC v10 pattern documented in the official docs [VERIFIED: trpc.io/docs/v10/server/merging-routers].
 
 **Example:**
+
 ```typescript
 // apps/api/src/routers/auth.ts
 import { z } from "zod";
@@ -169,18 +170,16 @@ import { router, publicProcedure, protectedProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
 
 export const authRouter = router({
-  signIn: publicProcedure
-    .input(z.object({ email: z.string().email() }))
-    .mutation(async ({ ctx, input }) => {
-      const user = await ctx.prisma.user.findUnique({
-        where: { email: input.email },
-      });
-      if (!user) {
-        throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
-      }
-      // create session, return user
-      return user;
-    }),
+  signIn: publicProcedure.input(z.object({ email: z.string().email() })).mutation(async ({ ctx, input }) => {
+    const user = await ctx.prisma.user.findUnique({
+      where: { email: input.email },
+    });
+    if (!user) {
+      throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
+    }
+    // create session, return user
+    return user;
+  }),
 });
 
 // apps/api/src/index.ts — merge into appRouter
@@ -200,6 +199,7 @@ export const authRouter = router({
 **When to use:** For all procedures with input parameters. [VERIFIED: trpc.io/docs/server/error-handling]
 
 **Example:**
+
 ```typescript
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
@@ -224,6 +224,7 @@ export const myProcedure = publicProcedure
 **When to use:** In `modules.submitDecode` and `submissions.create`.
 
 **Example:**
+
 ```typescript
 .submitDecode: protectedProcedure
   .input(z.object({ moduleId: z.string().cuid(), code: z.string() }))
@@ -271,6 +272,7 @@ export const myProcedure = publicProcedure
 **When to use:** In all router test files.
 
 **Example:**
+
 ```typescript
 // apps/api/src/__tests__/helpers.ts
 import type { Context } from "../context";
@@ -300,9 +302,11 @@ describe("tracksRouter", () => {
 
     // Mock Prisma
     ctx.prisma.track = {
-      findMany: jest.fn().mockResolvedValue([
-        { id: "1", title: "Test Track", description: "Desc", published: true, _count: { modules: 3 } },
-      ]),
+      findMany: jest
+        .fn()
+        .mockResolvedValue([
+          { id: "1", title: "Test Track", description: "Desc", published: true, _count: { modules: 3 } },
+        ]),
     } as any;
 
     const result = await caller.getAll();
@@ -321,12 +325,12 @@ describe("tracksRouter", () => {
 
 ## Don't Hand-Roll
 
-| Problem | Don't Build | Use Instead | Why |
-|---------|-------------|-------------|-----|
-| Input validation | Manual type guards or if/else chains | Zod schemas with `.input()` | tRPC + Zod provides automatic type inference, structured error responses via `errorFormatter`, and zero-boilerplate validation |
-| Error codes | Custom error classes | `TRPCError` with semantic codes | Maps automatically to HTTP status codes; client receives consistent error shape; `getHTTPStatusCodeFromError()` for external API handlers |
-| Session auth | Custom middleware in each file | `protectedProcedure` | Already implemented in `trpc.ts`; one middleware guards all protected routes with consistent UNAUTHORIZED behavior |
-| Async job queue | Inline setTimeout/retry logic | BullMQ via `submissionQueue.add()` | Already implemented in `index.ts`; provides retry, concurrency, observability; graceful fallback when Redis is down |
+| Problem          | Don't Build                          | Use Instead                        | Why                                                                                                                                       |
+| ---------------- | ------------------------------------ | ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| Input validation | Manual type guards or if/else chains | Zod schemas with `.input()`        | tRPC + Zod provides automatic type inference, structured error responses via `errorFormatter`, and zero-boilerplate validation            |
+| Error codes      | Custom error classes                 | `TRPCError` with semantic codes    | Maps automatically to HTTP status codes; client receives consistent error shape; `getHTTPStatusCodeFromError()` for external API handlers |
+| Session auth     | Custom middleware in each file       | `protectedProcedure`               | Already implemented in `trpc.ts`; one middleware guards all protected routes with consistent UNAUTHORIZED behavior                        |
+| Async job queue  | Inline setTimeout/retry logic        | BullMQ via `submissionQueue.add()` | Already implemented in `index.ts`; provides retry, concurrency, observability; graceful fallback when Redis is down                       |
 
 **Key insight:** tRPC v10's `createCallerFactory` is the most natural way to test routers — it avoids HTTP transport entirely, provides full type safety, and works with any mock context. Do not use supertest or HTTP-level testing for router unit tests.
 
@@ -337,19 +341,21 @@ describe("tracksRouter", () => {
 **Dependencies:** None. Builds first.
 **Namespace key in appRouter:** `auth`
 
-| Procedure | Type | Auth | Input Zod Schema | Output | Side Effects |
-|-----------|------|------|-----------------|--------|-------------|
-| `signIn` | mutation | public | `{ email: z.string().email(), password: z.string().optional() }` | `{ user: { id, name, email } }` | Creates `Session` record via Prisma |
-| `signUp` | mutation | public | `{ name: z.string().min(1).max(100), email: z.string().email() }` | `{ user: { id, name, email } }` | Creates `User` + `Account` records |
-| `getSession` | query | protected | none | `{ user: { id, name, email } }` | None — reads from `ctx.session` |
-| `signOut` | mutation | protected | `{ }` | `{ success: true }` | Deletes `Session` record where `sessionToken = ctx.session.sessionToken` |
+| Procedure    | Type     | Auth      | Input Zod Schema                                                  | Output                          | Side Effects                                                             |
+| ------------ | -------- | --------- | ----------------------------------------------------------------- | ------------------------------- | ------------------------------------------------------------------------ |
+| `signIn`     | mutation | public    | `{ email: z.string().email(), password: z.string().optional() }`  | `{ user: { id, name, email } }` | Creates `Session` record via Prisma                                      |
+| `signUp`     | mutation | public    | `{ name: z.string().min(1).max(100), email: z.string().email() }` | `{ user: { id, name, email } }` | Creates `User` + `Account` records                                       |
+| `getSession` | query    | protected | none                                                              | `{ user: { id, name, email } }` | None — reads from `ctx.session`                                          |
+| `signOut`    | mutation | protected | `{ }`                                                             | `{ success: true }`             | Deletes `Session` record where `sessionToken = ctx.session.sessionToken` |
 
 **Error cases:**
+
 - `signIn`: Email not found → `NOT_FOUND`
 - `signUp`: Email already exists → `CONFLICT` (code: "CONFLICT")
 - `getSession`: No session → handled by `protectedProcedure` → `UNAUTHORIZED`
 
 **Prisma queries:**
+
 - `signIn`: `prisma.user.findUnique({ where: { email } })` → `prisma.session.create({ data: { sessionToken: crypto.randomUUID(), userId: user.id, expires: ... } })`
 - `signUp`: `prisma.user.findUnique({ where: { email } })` (check) → `prisma.user.create({ data: { name, email } })` + `prisma.account.create({ data: { userId, type: "credentials", provider: "credentials", providerAccountId: user.id } })`
 - `signOut`: `prisma.session.delete({ where: { sessionToken } })`
@@ -361,17 +367,19 @@ describe("tracksRouter", () => {
 **Dependencies:** auth (for protectedProcedure). Build second.
 **Namespace key in appRouter:** `tracks`
 
-| Procedure | Type | Auth | Input Zod Schema | Output | Side Effects |
-|-----------|------|------|-----------------|--------|-------------|
-| `getAll` | query | public | none | `Array<{ id, title, description, published, moduleCount }>` | None |
-| `getById` | query | public | `{ id: z.string().cuid() }` | `{ id, title, description, modules: Module[] }` | None |
-| `getProgress` | query | protected | none | `Array<{ id, title, completedModules, totalModules, score }>` | None |
+| Procedure     | Type  | Auth      | Input Zod Schema            | Output                                                        | Side Effects |
+| ------------- | ----- | --------- | --------------------------- | ------------------------------------------------------------- | ------------ |
+| `getAll`      | query | public    | none                        | `Array<{ id, title, description, published, moduleCount }>`   | None         |
+| `getById`     | query | public    | `{ id: z.string().cuid() }` | `{ id, title, description, modules: Module[] }`               | None         |
+| `getProgress` | query | protected | none                        | `Array<{ id, title, completedModules, totalModules, score }>` | None         |
 
 **Error cases:**
+
 - `getById`: Track not found → `NOT_FOUND`
 - `getProgress`: No user → handled by `protectedProcedure`
 
 **Prisma queries:**
+
 - `getAll`: `prisma.track.findMany({ where: { published: true }, include: { _count: { select: { modules: true } } } })`
 - `getById`: `prisma.track.findUnique({ where: { id }, include: { modules: { orderBy: { order: "asc" } } } })`
 - `getProgress`: Complex — join Track → Module → Submission where userId matches, group by track
@@ -381,20 +389,22 @@ describe("tracksRouter", () => {
 **Dependencies:** tracks (module has trackId reference). Build third.
 **Namespace key in appRouter:** `modules`
 
-| Procedure | Type | Auth | Input Zod Schema | Output | Side Effects |
-|-----------|------|------|-----------------|--------|-------------|
-| `getById` | query | public | `{ id: z.string().cuid() }` | `{ id, title, content, trackId, order }` | None |
-| `getContent` | query | public | `{ id: z.string().cuid() }` | `{ content: string }` | None |
-| `getByTrack` | query | public | `{ trackId: z.string().cuid() }` | `Array<Module>` ordered by `order` asc | None |
-| `submitDecode` | mutation | protected | `{ moduleId: z.string().cuid(), code: z.string() }` | `{ submissionId: string }` | Creates Submission + enqueues BullMQ job |
-| `getProgress` | query | protected | `{ moduleId: z.string().cuid() }` | `{ submitted, status, score, defendStatus }` | None |
+| Procedure      | Type     | Auth      | Input Zod Schema                                    | Output                                       | Side Effects                             |
+| -------------- | -------- | --------- | --------------------------------------------------- | -------------------------------------------- | ---------------------------------------- |
+| `getById`      | query    | public    | `{ id: z.string().cuid() }`                         | `{ id, title, content, trackId, order }`     | None                                     |
+| `getContent`   | query    | public    | `{ id: z.string().cuid() }`                         | `{ content: string }`                        | None                                     |
+| `getByTrack`   | query    | public    | `{ trackId: z.string().cuid() }`                    | `Array<Module>` ordered by `order` asc       | None                                     |
+| `submitDecode` | mutation | protected | `{ moduleId: z.string().cuid(), code: z.string() }` | `{ submissionId: string }`                   | Creates Submission + enqueues BullMQ job |
+| `getProgress`  | query    | protected | `{ moduleId: z.string().cuid() }`                   | `{ submitted, status, score, defendStatus }` | None                                     |
 
 **Error cases:**
+
 - `getById/getContent`: Module not found → `NOT_FOUND`
 - `submitDecode`: Module not found → `NOT_FOUND`
 - `submitDecode`: Already submitted (optional check) → `CONFLICT`
 
 **Prisma queries:**
+
 - `getById`: `prisma.module.findUnique({ where: { id } })`
 - `getContent`: `prisma.module.findUnique({ where: { id }, select: { content: true } })`
 - `getByTrack`: `prisma.module.findMany({ where: { trackId }, orderBy: { order: "asc" } })`
@@ -406,18 +416,20 @@ describe("tracksRouter", () => {
 **Dependencies:** modules (submission has moduleId). Build fourth.
 **Namespace key in appRouter:** `submissions`
 
-| Procedure | Type | Auth | Input Zod Schema | Output | Side Effects |
-|-----------|------|------|-----------------|--------|-------------|
-| `create` | mutation | protected | `{ moduleId: z.string().cuid(), code: z.string() }` | `{ submissionId: string }` | Creates Submission + enqueues BullMQ job |
-| `getHistory` | query | protected | `{ moduleId: z.string().cuid().optional() }` | `Array<Submission>` | None |
-| `getById` | query | protected | `{ id: z.string().cuid() }` | `Submission` with feedback parsed | None |
+| Procedure    | Type     | Auth      | Input Zod Schema                                    | Output                            | Side Effects                             |
+| ------------ | -------- | --------- | --------------------------------------------------- | --------------------------------- | ---------------------------------------- |
+| `create`     | mutation | protected | `{ moduleId: z.string().cuid(), code: z.string() }` | `{ submissionId: string }`        | Creates Submission + enqueues BullMQ job |
+| `getHistory` | query    | protected | `{ moduleId: z.string().cuid().optional() }`        | `Array<Submission>`               | None                                     |
+| `getById`    | query    | protected | `{ id: z.string().cuid() }`                         | `Submission` with feedback parsed | None                                     |
 
 **Error cases:**
+
 - `create`: Module not found → `NOT_FOUND`
 - `getById`: Submission not found → `NOT_FOUND`
 - `getById`: Submission belongs to another user → `FORBIDDEN`
 
 **Prisma queries:**
+
 - `create`: Same pattern as `modules.submitDecode`
 - `getHistory`: `prisma.submission.findMany({ where: { userId, moduleId }, orderBy: { createdAt: "desc" } })`
 - `getById`: `prisma.submission.findUnique({ where: { id } })` → verify `submission.userId === ctx.session.user.id`
@@ -427,15 +439,16 @@ describe("tracksRouter", () => {
 **Dependencies:** submissions (reads scored submissions). Build fifth.
 **Namespace key in appRouter:** `irs`
 
-| Procedure | Type | Auth | Input Zod Schema | Output | Side Effects |
-|-----------|------|------|-----------------|--------|-------------|
-| `getScore` | query | protected | none | `{ id, score, details, createdAt }` or null | None |
-| `getHistory` | query | protected | none | `Array<IRSScore>` ordered desc | None |
-| `getBlindspots` | query | protected | none | `Array<{ concept, avgScore, count }>` | None |
+| Procedure       | Type  | Auth      | Input Zod Schema | Output                                      | Side Effects |
+| --------------- | ----- | --------- | ---------------- | ------------------------------------------- | ------------ |
+| `getScore`      | query | protected | none             | `{ id, score, details, createdAt }` or null | None         |
+| `getHistory`    | query | protected | none             | `Array<IRSScore>` ordered desc              | None         |
+| `getBlindspots` | query | protected | none             | `Array<{ concept, avgScore, count }>`       | None         |
 
 **Error cases:** None — returns null/empty instead of throwing for missing data.
 
 **Prisma queries:**
+
 - `getScore`: `prisma.iRSScore.findFirst({ where: { userId }, orderBy: { createdAt: "desc" } })`
 - `getHistory`: `prisma.iRSScore.findMany({ where: { userId }, orderBy: { createdAt: "desc" } })`
 - `getBlindspots`: Query all scored submissions → parse dimension scores from feedback → aggregate by dimension name → return concepts where avgScore < threshold
@@ -445,18 +458,20 @@ describe("tracksRouter", () => {
 **Dependencies:** auth (for joinRoom). Build independently (any time after auth).
 **Namespace key in appRouter:** `warRoom`
 
-| Procedure | Type | Auth | Input Zod Schema | Output | Side Effects |
-|-----------|------|------|-----------------|--------|-------------|
-| `getRoom` | query | public | none | `WarRoom` or null | None |
-| `getMessages` | query | public | `{ roomId: z.string().cuid().optional() }` | `Array<Message>` (from in-memory or Prisma) | None |
-| `getLeaderboard` | query | public | none | `Array<{ userId, name, score }>` | None |
-| `joinRoom` | mutation | protected | `{ roomId: z.string().cuid() }` | `{ success: true }` | Socket.io event emit |
+| Procedure        | Type     | Auth      | Input Zod Schema                           | Output                                      | Side Effects         |
+| ---------------- | -------- | --------- | ------------------------------------------ | ------------------------------------------- | -------------------- |
+| `getRoom`        | query    | public    | none                                       | `WarRoom` or null                           | None                 |
+| `getMessages`    | query    | public    | `{ roomId: z.string().cuid().optional() }` | `Array<Message>` (from in-memory or Prisma) | None                 |
+| `getLeaderboard` | query    | public    | none                                       | `Array<{ userId, name, score }>`            | None                 |
+| `joinRoom`       | mutation | protected | `{ roomId: z.string().cuid() }`            | `{ success: true }`                         | Socket.io event emit |
 
 **Error cases:**
+
 - `getRoom`: No active room → returns null (not an error)
 - `joinRoom`: Room not found → `NOT_FOUND`
 
 **Prisma queries:**
+
 - `getRoom`: `prisma.warRoom.findFirst({ orderBy: { createdAt: "desc" } })`
 - `getLeaderboard`: Query latest IRSScore per user → `prisma.iRSScore.groupBy({ by: ["userId"], _max: { score: true } })` then join User for names
 
@@ -467,15 +482,16 @@ describe("tracksRouter", () => {
 **Dependencies:** auth, submissions, irs. Build last — aggregates across other domains.
 **Namespace key in appRouter:** `profile`
 
-| Procedure | Type | Auth | Input Zod Schema | Output | Side Effects |
-|-----------|------|------|-----------------|--------|-------------|
-| `getProfile` | query | protected | none | `{ user: User, stats: Stats }` | None |
-| `getRecent` | query | protected | none | `Array<{ moduleId, moduleTitle, trackId, submittedAt, score }>` | None |
-| `getStats` | query | protected | none | `{ completedModules, totalSubmissions, avgScore, currentStreak, defendSessions }` | None |
+| Procedure    | Type  | Auth      | Input Zod Schema | Output                                                                            | Side Effects |
+| ------------ | ----- | --------- | ---------------- | --------------------------------------------------------------------------------- | ------------ |
+| `getProfile` | query | protected | none             | `{ user: User, stats: Stats }`                                                    | None         |
+| `getRecent`  | query | protected | none             | `Array<{ moduleId, moduleTitle, trackId, submittedAt, score }>`                   | None         |
+| `getStats`   | query | protected | none             | `{ completedModules, totalSubmissions, avgScore, currentStreak, defendSessions }` | None         |
 
 **Error cases:** None — logged-in user always has a profile.
 
 **Prisma queries:**
+
 - `getProfile`: `prisma.user.findUnique({ where: { id } })` + aggregate Submission/IRSScore
 - `getRecent`: `prisma.submission.findMany({ where: { userId }, orderBy: { createdAt: "desc" }, take: 10, include: { module: { select: { title: true, trackId: true } } } })`
 - `getStats`: Multiple Prisma queries:
@@ -530,6 +546,7 @@ auth ─────────────────────────
 **Build order:** auth → tracks → modules → submissions → irs → warRoom (independent of 2-5 chain) → profile
 
 **Recommended wave grouping for parallel execution:**
+
 - **Wave 1** (parallel): auth + tracks + warRoom
 - **Wave 2** (parallel, after auth): modules + irs
 - **Wave 3** (after modules): submissions
@@ -616,57 +633,53 @@ const signUpSchema = z.object({
 });
 
 export const authRouter = router({
-  signIn: publicProcedure
-    .input(signInSchema)
-    .mutation(async ({ ctx, input }) => {
-      const user = await ctx.prisma.user.findUnique({
-        where: { email: input.email },
+  signIn: publicProcedure.input(signInSchema).mutation(async ({ ctx, input }) => {
+    const user = await ctx.prisma.user.findUnique({
+      where: { email: input.email },
+    });
+    if (!user) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "No user found with this email",
       });
-      if (!user) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "No user found with this email",
-        });
-      }
+    }
 
-      const sessionToken = crypto.randomUUID();
-      const expires = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days
+    const sessionToken = crypto.randomUUID();
+    const expires = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days
 
-      await ctx.prisma.session.create({
-        data: { sessionToken, userId: user.id, expires },
+    await ctx.prisma.session.create({
+      data: { sessionToken, userId: user.id, expires },
+    });
+
+    return { user: { id: user.id, name: user.name, email: user.email } };
+  }),
+
+  signUp: publicProcedure.input(signUpSchema).mutation(async ({ ctx, input }) => {
+    const existing = await ctx.prisma.user.findUnique({
+      where: { email: input.email },
+    });
+    if (existing) {
+      throw new TRPCError({
+        code: "CONFLICT",
+        message: "A user with this email already exists",
       });
+    }
 
-      return { user: { id: user.id, name: user.name, email: user.email } };
-    }),
+    const user = await ctx.prisma.user.create({
+      data: { name: input.name, email: input.email },
+    });
 
-  signUp: publicProcedure
-    .input(signUpSchema)
-    .mutation(async ({ ctx, input }) => {
-      const existing = await ctx.prisma.user.findUnique({
-        where: { email: input.email },
-      });
-      if (existing) {
-        throw new TRPCError({
-          code: "CONFLICT",
-          message: "A user with this email already exists",
-        });
-      }
+    await ctx.prisma.account.create({
+      data: {
+        userId: user.id,
+        type: "credentials",
+        provider: "credentials",
+        providerAccountId: user.id,
+      },
+    });
 
-      const user = await ctx.prisma.user.create({
-        data: { name: input.name, email: input.email },
-      });
-
-      await ctx.prisma.account.create({
-        data: {
-          userId: user.id,
-          type: "credentials",
-          provider: "credentials",
-          providerAccountId: user.id,
-        },
-      });
-
-      return { user: { id: user.id, name: user.name, email: user.email } };
-    }),
+    return { user: { id: user.id, name: user.name, email: user.email } };
+  }),
 
   getSession: protectedProcedure.query(async ({ ctx }) => {
     return { user: ctx.session.user };
@@ -708,20 +721,18 @@ export const tracksRouter = router({
     }));
   }),
 
-  getById: publicProcedure
-    .input(z.object({ id: z.string().cuid() }))
-    .query(async ({ ctx, input }) => {
-      const track = await ctx.prisma.track.findUnique({
-        where: { id: input.id },
-        include: { modules: { orderBy: { order: "asc" } } },
-      });
+  getById: publicProcedure.input(z.object({ id: z.string().cuid() })).query(async ({ ctx, input }) => {
+    const track = await ctx.prisma.track.findUnique({
+      where: { id: input.id },
+      include: { modules: { orderBy: { order: "asc" } } },
+    });
 
-      if (!track) {
-        throw new TRPCError({ code: "NOT_FOUND", message: "Track not found" });
-      }
+    if (!track) {
+      throw new TRPCError({ code: "NOT_FOUND", message: "Track not found" });
+    }
 
-      return track;
-    }),
+    return track;
+  }),
 
   getProgress: protectedProcedure.query(async ({ ctx }) => {
     // Get all tracks with module counts
@@ -763,45 +774,43 @@ const createSubmissionSchema = z.object({
 });
 
 export const submissionsRouter = router({
-  create: protectedProcedure
-    .input(createSubmissionSchema)
-    .mutation(async ({ ctx, input }) => {
-      const module = await ctx.prisma.module.findUnique({
-        where: { id: input.moduleId },
+  create: protectedProcedure.input(createSubmissionSchema).mutation(async ({ ctx, input }) => {
+    const module = await ctx.prisma.module.findUnique({
+      where: { id: input.moduleId },
+    });
+    if (!module) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "Module not found",
       });
-      if (!module) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Module not found",
-        });
-      }
+    }
 
-      const submission = await ctx.prisma.submission.create({
-        data: {
-          userId: ctx.session.user.id,
-          moduleId: input.moduleId,
-          code: input.code,
-          status: "pending",
-        },
+    const submission = await ctx.prisma.submission.create({
+      data: {
+        userId: ctx.session.user.id,
+        moduleId: input.moduleId,
+        code: input.code,
+        status: "pending",
+      },
+    });
+
+    if (ctx.submissionQueue) {
+      await ctx.submissionQueue.add("process-submission", {
+        submissionId: submission.id,
+        userId: ctx.session.user.id,
+        moduleId: input.moduleId,
+        code: input.code,
+        originalCode: module.content,
       });
+    } else {
+      ctx.logger.warn(
+        { submissionId: submission.id },
+        "BullMQ unavailable — submission will not be processed",
+      );
+    }
 
-      if (ctx.submissionQueue) {
-        await ctx.submissionQueue.add("process-submission", {
-          submissionId: submission.id,
-          userId: ctx.session.user.id,
-          moduleId: input.moduleId,
-          code: input.code,
-          originalCode: module.content,
-        });
-      } else {
-        ctx.logger.warn(
-          { submissionId: submission.id },
-          "BullMQ unavailable — submission will not be processed",
-        );
-      }
-
-      return { submissionId: submission.id };
-    }),
+    return { submissionId: submission.id };
+  }),
 
   getHistory: protectedProcedure
     .input(z.object({ moduleId: z.string().cuid().optional() }).optional())
@@ -816,54 +825,50 @@ export const submissionsRouter = router({
       });
     }),
 
-  getById: protectedProcedure
-    .input(z.object({ id: z.string().cuid() }))
-    .query(async ({ ctx, input }) => {
-      const submission = await ctx.prisma.submission.findUnique({
-        where: { id: input.id },
+  getById: protectedProcedure.input(z.object({ id: z.string().cuid() })).query(async ({ ctx, input }) => {
+    const submission = await ctx.prisma.submission.findUnique({
+      where: { id: input.id },
+    });
+
+    if (!submission) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "Submission not found",
       });
+    }
 
-      if (!submission) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Submission not found",
-        });
-      }
+    if (submission.userId !== ctx.session.user.id) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "You do not have access to this submission",
+      });
+    }
 
-      if (submission.userId !== ctx.session.user.id) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message: "You do not have access to this submission",
-        });
-      }
-
-      // Parse feedback JSON if present
-      return {
-        ...submission,
-        feedback: submission.feedback
-          ? (JSON.parse(submission.feedback) as Record<string, unknown>)
-          : null,
-      };
-    }),
+    // Parse feedback JSON if present
+    return {
+      ...submission,
+      feedback: submission.feedback ? (JSON.parse(submission.feedback) as Record<string, unknown>) : null,
+    };
+  }),
 });
 ```
 
 ## State of the Art
 
-| Old Approach | Current Approach | When Changed | Impact |
-|--------------|------------------|--------------|--------|
-| Mock data hooks in web app | Real tRPC routers with Prisma queries | Phase 2 | All frontend data becomes live and type-safe |
-| Single `health` procedure | 7 domain routers with 20+ procedures | Phase 2 | Full API surface available for frontend consumption |
-| Inline appRouter in index.ts | Modular child routers in routers/ | Phase 2 | Each router independently testable and maintainable |
+| Old Approach                 | Current Approach                      | When Changed | Impact                                              |
+| ---------------------------- | ------------------------------------- | ------------ | --------------------------------------------------- |
+| Mock data hooks in web app   | Real tRPC routers with Prisma queries | Phase 2      | All frontend data becomes live and type-safe        |
+| Single `health` procedure    | 7 domain routers with 20+ procedures  | Phase 2      | Full API surface available for frontend consumption |
+| Inline appRouter in index.ts | Modular child routers in routers/     | Phase 2      | Each router independently testable and maintainable |
 
 ## Assumptions Log
 
-| # | Claim | Section | Risk if Wrong |
-|---|-------|---------|---------------|
-| A1 | `createCallerFactory` can test a child router independently (without the full `appRouter`) | Testing | If tRPC v10 requires the full router hierarchy, we need to import appRouter instead |
-| A2 | `ctx.submissionQueue` is nullable and procedures should guard against null | BullMQ Enqueuing | If queue is null when a submission is created, the job never processes — the worker needs to be restarted once Redis is available |
-| A3 | Session token is `crypto.randomUUID()` format | Auth Router | If Auth.js expects a specific session token format, our manual Session.create() may produce incompatible tokens |
-| A4 | `signOut` procedure can be implemented by deleting the session record | Auth Router | The frontend auth flow may handle sign-out differently (clearing cookies vs server-side deletion) |
+| #   | Claim                                                                                      | Section          | Risk if Wrong                                                                                                                     |
+| --- | ------------------------------------------------------------------------------------------ | ---------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| A1  | `createCallerFactory` can test a child router independently (without the full `appRouter`) | Testing          | If tRPC v10 requires the full router hierarchy, we need to import appRouter instead                                               |
+| A2  | `ctx.submissionQueue` is nullable and procedures should guard against null                 | BullMQ Enqueuing | If queue is null when a submission is created, the job never processes — the worker needs to be restarted once Redis is available |
+| A3  | Session token is `crypto.randomUUID()` format                                              | Auth Router      | If Auth.js expects a specific session token format, our manual Session.create() may produce incompatible tokens                   |
+| A4  | `signOut` procedure can be implemented by deleting the session record                      | Auth Router      | The frontend auth flow may handle sign-out differently (clearing cookies vs server-side deletion)                                 |
 
 ## Open Questions
 
@@ -880,21 +885,25 @@ export const submissionsRouter = router({
 ## Testing Strategy
 
 ### Test Framework
-| Property | Value |
-|----------|-------|
-| Framework | Jest 29+ with ts-jest |
-| Config file | `apps/api/jest.config.ts` |
-| Quick run command | `pnpm --filter api test` |
+
+| Property           | Value                                  |
+| ------------------ | -------------------------------------- |
+| Framework          | Jest 29+ with ts-jest                  |
+| Config file        | `apps/api/jest.config.ts`              |
+| Quick run command  | `pnpm --filter api test`               |
 | Full suite command | `pnpm --filter api test -- --coverage` |
 
 ### Router Test Pattern
+
 Each router test file follows the same structure:
+
 1. Import the router + `createCallerFactory`
 2. Create a `createTestContext()` helper (shared across all test files)
 3. Mock specific Prisma model methods on the context
 4. Test each procedure: success case → error case → auth rejection
 
 ### Wave 0 Gaps
+
 - [ ] `apps/api/src/__tests__/helpers.ts` — shared test context factory (NEW)
 - [ ] `apps/api/src/__tests__/auth.test.ts` (NEW)
 - [ ] `apps/api/src/__tests__/tracks.test.ts` (NEW)
@@ -906,34 +915,34 @@ Each router test file follows the same structure:
 
 ## Environment Availability
 
-| Dependency | Required By | Available | Version | Fallback |
-|------------|------------|-----------|---------|----------|
-| Jest | Router testing | ✓ (jest.config.ts exists) | 29.x | — |
-| ts-jest | TypeScript test compilation | ✓ (in jest.config.ts) | — | — |
-| Prisma Client | All routers | ✓ (in package.json) | 5.12.1 | — |
-| BullMQ | Submission processing | ✓ (in package.json) | 5.7.0 | Graceful null fallback |
-| PostgreSQL | Data persistence | ✓ (via Docker) | — | — |
+| Dependency    | Required By                 | Available                 | Version | Fallback               |
+| ------------- | --------------------------- | ------------------------- | ------- | ---------------------- |
+| Jest          | Router testing              | ✓ (jest.config.ts exists) | 29.x    | —                      |
+| ts-jest       | TypeScript test compilation | ✓ (in jest.config.ts)     | —       | —                      |
+| Prisma Client | All routers                 | ✓ (in package.json)       | 5.12.1  | —                      |
+| BullMQ        | Submission processing       | ✓ (in package.json)       | 5.7.0   | Graceful null fallback |
+| PostgreSQL    | Data persistence            | ✓ (via Docker)            | —       | —                      |
 
 ## Security Domain
 
 ### Applicable ASVS Categories
 
-| ASVS Category | Applies | Standard Control |
-|---------------|---------|-----------------|
-| V2 Authentication | yes | `protectedProcedure` middleware enforces session validation |
-| V3 Session Management | yes | Session token in `Session` table; `signOut` deletes record |
-| V4 Access Control | yes | Ownership check (`submissions.getById` verifies userId) |
-| V5 Input Validation | yes | Zod schemas on every procedure |
-| V8 Data Protection | yes | Feedback JSON may contain scoring data — ownership check required |
+| ASVS Category         | Applies | Standard Control                                                  |
+| --------------------- | ------- | ----------------------------------------------------------------- |
+| V2 Authentication     | yes     | `protectedProcedure` middleware enforces session validation       |
+| V3 Session Management | yes     | Session token in `Session` table; `signOut` deletes record        |
+| V4 Access Control     | yes     | Ownership check (`submissions.getById` verifies userId)           |
+| V5 Input Validation   | yes     | Zod schemas on every procedure                                    |
+| V8 Data Protection    | yes     | Feedback JSON may contain scoring data — ownership check required |
 
 ### Known Threat Patterns
 
-| Pattern | STRIDE | Standard Mitigation |
-|---------|--------|---------------------|
-| Unauthenticated access to protected endpoints | Spoofing | `protectedProcedure` middleware; returns UNAUTHORIZED |
-| Horizontal privilege escalation (view another user's submission) | Information Disclosure | Ownership check `submission.userId !== ctx.session.user.id` → FORBIDDEN |
-| Input injection via code field in submission | Tampering | Code stored as string, never executed by API; AI service handles sanitization |
-| Session token theft via leaked response | Information Disclosure | Session cookie is HttpOnly (handled by Auth.js); Bearer token only in Authorization header |
+| Pattern                                                          | STRIDE                 | Standard Mitigation                                                                        |
+| ---------------------------------------------------------------- | ---------------------- | ------------------------------------------------------------------------------------------ |
+| Unauthenticated access to protected endpoints                    | Spoofing               | `protectedProcedure` middleware; returns UNAUTHORIZED                                      |
+| Horizontal privilege escalation (view another user's submission) | Information Disclosure | Ownership check `submission.userId !== ctx.session.user.id` → FORBIDDEN                    |
+| Input injection via code field in submission                     | Tampering              | Code stored as string, never executed by API; AI service handles sanitization              |
+| Session token theft via leaked response                          | Information Disclosure | Session cookie is HttpOnly (handled by Auth.js); Bearer token only in Authorization header |
 
 ## Sources
 
@@ -957,6 +966,7 @@ Each router test file follows the same structure:
 ## Metadata
 
 **Confidence breakdown:**
+
 - Standard stack: HIGH — all packages verified from package.json and node_modules
 - Architecture: HIGH — patterns verified from tRPC official docs and codebase inspection
 - Pitfalls: HIGH — all based on observed code patterns in the existing codebase

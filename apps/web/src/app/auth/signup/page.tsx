@@ -59,11 +59,7 @@ export default function SignUpPage() {
             Sign up with Google
           </Button>
           <div className="grid gap-2 pt-3">
-            <Input
-              placeholder="Your name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
+            <Input placeholder="Your name" value={name} onChange={(e) => setName(e.target.value)} />
             <Input
               placeholder="email@company.com"
               type="email"
@@ -71,9 +67,7 @@ export default function SignUpPage() {
               onChange={(e) => setEmail(e.target.value)}
             />
             {error && <p className="text-sm text-destructive">{error}</p>}
-            <Button onClick={handleSignUp}>
-              Create account
-            </Button>
+            <Button onClick={handleSignUp}>Create account</Button>
           </div>
           <p className="pt-2 text-center text-sm text-muted-foreground">
             Already training?{" "}

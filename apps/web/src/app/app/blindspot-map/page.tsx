@@ -25,7 +25,9 @@ export default function BlindspotMapPage() {
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12">
             <p className="text-lg font-medium">No blindspots identified yet</p>
-            <p className="mt-2 text-sm text-muted-foreground">Complete some modules to generate your blindspot map.</p>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Complete some modules to generate your blindspot map.
+            </p>
           </CardContent>
         </Card>
       </>
@@ -55,7 +57,9 @@ export default function BlindspotMapPage() {
               <div className="mt-4 grid gap-3 md:grid-cols-2">
                 <div className="rounded-md border border-border bg-background/60 p-3">
                   <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Evidence</p>
-                  <p className="mt-2 text-sm">{blindspot.attemptCount} attempts — avg score {100 - blindspot.severity}%</p>
+                  <p className="mt-2 text-sm">
+                    {blindspot.attemptCount} attempts — avg score {100 - blindspot.severity}%
+                  </p>
                 </div>
                 <div className="rounded-md border border-border bg-background/60 p-3">
                   <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Next action</p>

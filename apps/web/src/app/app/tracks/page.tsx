@@ -48,7 +48,9 @@ export default function TracksPage() {
             <CardContent>
               <p className="min-h-16 text-sm leading-6 text-muted-foreground">{track.description}</p>
               <div className="my-4">
-                <p className="text-xs text-muted-foreground">{track.moduleCount} module{track.moduleCount !== 1 ? "s" : ""}</p>
+                <p className="text-xs text-muted-foreground">
+                  {track.moduleCount} module{track.moduleCount !== 1 ? "s" : ""}
+                </p>
               </div>
               <div className="space-y-2">
                 {track.modules.map((module) => (

@@ -28,7 +28,10 @@ export const irsRouter = router({
     });
 
     // Group by module and calculate average scores
-    const moduleScores = new Map<string, { module: (typeof submissions)[number]["module"]; scores: number[] }>();
+    const moduleScores = new Map<
+      string,
+      { module: (typeof submissions)[number]["module"]; scores: number[] }
+    >();
     for (const sub of submissions) {
       if (!sub.feedback) continue;
       try {
@@ -48,8 +51,7 @@ export const irsRouter = router({
 
     const blindspots = Array.from(moduleScores.entries())
       .map(([id, data]) => {
-        const avg =
-          data.scores.reduce((a, b) => a + b, 0) / data.scores.length;
+        const avg = data.scores.reduce((a, b) => a + b, 0) / data.scores.length;
         const averageScore = Math.round(avg * 100);
         return {
           id,

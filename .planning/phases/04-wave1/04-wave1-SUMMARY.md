@@ -53,19 +53,19 @@ None — plan executed exactly as written.
 
 ## Key Decisions
 
-| Decision | Rationale |
-|----------|-----------|
-| Re-export pattern for `error.tsx` | Single source of truth in `error-fallback.tsx`; no duplicated markup across 7 boundaries |
+| Decision                             | Rationale                                                                                     |
+| ------------------------------------ | --------------------------------------------------------------------------------------------- |
+| Re-export pattern for `error.tsx`    | Single source of truth in `error-fallback.tsx`; no duplicated markup across 7 boundaries      |
 | Sentry DSNs use example placeholders | Prevents accidental use of real DSNs in development; documented format matches real structure |
-| Empty states preserve PageHeader | Users see the page title/description even when no data exists, consistent with loading states |
+| Empty states preserve PageHeader     | Users see the page title/description even when no data exists, consistent with loading states |
 
 ## Task Completion
 
-| Task | Name | Status | Commit |
-|------|------|--------|--------|
-| 1 | Sentry DSN configuration | ✅ | `60112fe` |
-| 2 | Error boundaries for frontend pages | ✅ | `1a5dfd2` |
-| 3 | Empty states for tRPC queries | ✅ | `3c09120` |
+| Task | Name                                | Status | Commit    |
+| ---- | ----------------------------------- | ------ | --------- |
+| 1    | Sentry DSN configuration            | ✅     | `60112fe` |
+| 2    | Error boundaries for frontend pages | ✅     | `1a5dfd2` |
+| 3    | Empty states for tRPC queries       | ✅     | `3c09120` |
 
 ## Commits
 
@@ -77,12 +77,12 @@ None — plan executed exactly as written.
 
 ## Verification Results
 
-| Check | Result |
-|-------|--------|
-| `pnpm --filter=web exec tsc --noEmit` | ✅ Passed |
-| `pnpm --filter=api exec tsc --noEmit` | ✅ Passed |
-| `git status --short` | ✅ Clean (no modified files) |
-| Post-commit deletion check | ✅ No accidental deletions |
+| Check                                 | Result                       |
+| ------------------------------------- | ---------------------------- |
+| `pnpm --filter=web exec tsc --noEmit` | ✅ Passed                    |
+| `pnpm --filter=api exec tsc --noEmit` | ✅ Passed                    |
+| `git status --short`                  | ✅ Clean (no modified files) |
+| Post-commit deletion check            | ✅ No accidental deletions   |
 
 ## Known Stubs
 

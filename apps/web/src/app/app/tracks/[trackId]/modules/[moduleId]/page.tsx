@@ -33,12 +33,7 @@ export default function ModulePage({ params }: { params: { trackId: string; modu
         title={dbModule.title}
         description={dbModule.content}
       />
-      <ModulePlayer
-        module={moduleForPlayer}
-        annotations={[]}
-        quiz={[]}
-        diffLines={[]}
-      />
+      <ModulePlayer module={moduleForPlayer} annotations={[]} quiz={[]} diffLines={[]} />
     </>
   );
 }

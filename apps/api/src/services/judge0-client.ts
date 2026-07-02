@@ -52,10 +52,7 @@ export async function executeCode(params: {
     });
 
     if (!response.ok) {
-      throw new Judge0Error(
-        `Judge0 returned ${response.status}`,
-        response.status,
-      );
+      throw new Judge0Error(`Judge0 returned ${response.status}`, response.status);
     }
 
     return response.json() as Promise<Judge0Submission>;
