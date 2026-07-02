@@ -14,18 +14,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     <div className="min-h-screen w-full relative">
       <div
         className="absolute inset-0 z-0"
-        style={
-          darkMode
-            ? {
-                background:
-                  "radial-gradient(125% 125% at 50% 100%, #000000 40%, #010133 100%)",
-              }
-            : {
-                backgroundImage:
-                  "radial-gradient(125% 125% at 50% 90%, #ffffff 40%, #ec4899 100%)",
-                backgroundSize: "100% 100%",
-              }
-        }
+        style={{ background: "var(--gradient-radial)" }}
       />
       <div className="relative z-10">{children}</div>
     </div>
