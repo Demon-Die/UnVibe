@@ -3,6 +3,7 @@
 import Editor from "@monaco-editor/react";
 import { RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useUIStore } from "@/stores/ui-store";
 
 export function CodeEditor({
   code,
@@ -17,6 +18,8 @@ export function CodeEditor({
   onReset?: () => void;
   readOnly?: boolean;
 }) {
+  const darkMode = useUIStore((state) => state.darkMode);
+
   return (
     <div className="overflow-hidden rounded-lg border border-border bg-card">
       <div className="flex items-center justify-between border-b border-border px-3 py-2">
@@ -34,7 +37,7 @@ export function CodeEditor({
         height="420px"
         language={language}
         value={code}
-        theme="vs-dark"
+        theme={darkMode ? "vs-dark" : "light"}
         onChange={(value) => onChange(value ?? "")}
         options={{
           readOnly,
