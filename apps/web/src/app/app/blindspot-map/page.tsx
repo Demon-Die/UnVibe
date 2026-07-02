@@ -14,6 +14,24 @@ export default function BlindspotMapPage() {
 
   const items = blindspots ?? [];
 
+  if (items.length === 0) {
+    return (
+      <>
+        <PageHeader
+          eyebrow="blindspot map"
+          title="Weak concepts by evidence"
+          description="A compact view of concepts that need another decode, rebuild, or defend pass."
+        />
+        <Card>
+          <CardContent className="flex flex-col items-center justify-center py-12">
+            <p className="text-lg font-medium">No blindspots identified yet</p>
+            <p className="mt-2 text-sm text-muted-foreground">Complete some modules to generate your blindspot map.</p>
+          </CardContent>
+        </Card>
+      </>
+    );
+  }
+
   return (
     <>
       <PageHeader

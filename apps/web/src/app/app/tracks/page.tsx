@@ -12,6 +12,24 @@ export default function TracksPage() {
 
   if (isLoading || !tracks) return <LoadingPanel />;
 
+  if (tracks.length === 0) {
+    return (
+      <>
+        <PageHeader
+          eyebrow="tracks"
+          title="Choose a training path"
+          description="Select a track to begin training with real modules."
+        />
+        <Card>
+          <CardContent className="flex flex-col items-center justify-center py-12">
+            <p className="text-lg font-medium">No tracks available yet</p>
+            <p className="mt-2 text-sm text-muted-foreground">Tracks are being prepared. Check back soon.</p>
+          </CardContent>
+        </Card>
+      </>
+    );
+  }
+
   return (
     <>
       <PageHeader
