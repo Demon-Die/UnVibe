@@ -21,7 +21,7 @@ import { profileRouter } from "./routers/profile";
 import { judge0Router } from "./routers/judge0";
 import dotenv from "dotenv";
 
-dotenv.config({ path: "../../.env" });
+dotenv.config({ path: "../../.env.local" });
 
 const logger = pino({
   transport: {

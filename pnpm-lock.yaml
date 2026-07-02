@@ -15,7 +15,7 @@ importers:
         specifier: ^0.8.0
         version: 0.8.0(prettier@3.9.4)
       turbo:
-        specifier: ^2.10.2
+        specifier: ^2.0.0
         version: 2.10.2
 
   apps/api:
@@ -169,6 +169,9 @@ importers:
       '@types/react-dom':
         specifier: ^18
         version: 18.3.7(@types/react@18.3.31)
+      dotenv:
+        specifier: ^16.6.1
+        version: 16.6.1
       eslint:
         specifier: ^8
         version: 8.57.1

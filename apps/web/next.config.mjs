@@ -1,4 +1,8 @@
+import dotenv from "dotenv";
 import { withSentryConfig } from "@sentry/nextjs";
+
+// Load env vars from the root .env.local so both API and web read from the same file
+dotenv.config({ path: "../../.env.local" });
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
