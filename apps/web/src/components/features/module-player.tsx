@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { BookOpenCheck, Brain, MessageSquareQuote } from "lucide-react";
-import type { Annotation, DiffLine, MockModule, QuizQuestion } from "@/lib/mock-data/types";
+import type { Annotation, DiffLine, MockModule, QuizQuestion } from "@unvibe/types";
 import { useEditorStore } from "@/stores/editor-store";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -20,9 +20,23 @@ const phases = [
   { id: "defend", label: "Defend", icon: MessageSquareQuote },
 ] as const;
 
-export function ModulePlayer({ module, annotations, quiz, diffLines }: { module: MockModule; annotations: Annotation[]; quiz: QuizQuestion[]; diffLines: DiffLine[] }) {
+export function ModulePlayer({
+  module,
+  moduleId,
+  annotations,
+  quiz,
+  diffLines,
+}: {
+  module: MockModule;
+  moduleId: string;
+  annotations: Annotation[];
+  quiz: QuizQuestion[];
+  diffLines: DiffLine[];
+}) {
   const { phase, setPhase, code, setCode, resetCode, language } = useEditorStore();
-  const [defendAnswers, setDefendAnswers] = useState<string[]>(["I would preserve the early return so later branches can assume a user exists."]);
+  const [defendAnswers, setDefendAnswers] = useState<string[]>([
+    "I would preserve the early return so later branches can assume a user exists.",
+  ]);
 
   useEffect(() => {
     resetCode(module.starterCode);
@@ -67,7 +81,12 @@ export function ModulePlayer({ module, annotations, quiz, diffLines }: { module:
         {phase === "decode" ? (
           <CodeEditor code={module.sourceCode} language={language} onChange={() => undefined} readOnly />
         ) : (
-          <CodeEditor code={code || module.starterCode} language={language} onChange={setCode} onReset={() => resetCode(module.starterCode)} />
+          <CodeEditor
+            code={code || module.starterCode}
+            language={language}
+            onChange={setCode}
+            onReset={() => resetCode(module.starterCode)}
+          />
         )}
       </section>
 
@@ -79,7 +98,9 @@ export function ModulePlayer({ module, annotations, quiz, diffLines }: { module:
             </CardHeader>
             <CardContent>
               <AnnotationEditor annotations={annotations} />
-              <Button className="mt-4 w-full" onClick={() => setPhase("rebuild")}>Unlock rebuild</Button>
+              <Button className="mt-4 w-full" onClick={() => setPhase("rebuild")}>
+                Unlock rebuild
+              </Button>
             </CardContent>
           </Card>
         ) : null}
@@ -94,8 +115,10 @@ export function ModulePlayer({ module, annotations, quiz, diffLines }: { module:
                 <QuizUI questions={quiz} />
               </CardContent>
             </Card>
-            <CodeSubmission />
-            <Button className="w-full" variant="secondary" onClick={() => setPhase("defend")}>Start defend</Button>
+            <CodeSubmission moduleId={moduleId} />
+            <Button className="w-full" variant="secondary" onClick={() => setPhase("defend")}>
+              Start defend
+            </Button>
           </>
         ) : null}
 
@@ -110,9 +133,20 @@ export function ModulePlayer({ module, annotations, quiz, diffLines }: { module:
                   Why should the missing user branch return before reading roles?
                 </div>
                 {defendAnswers.map((answer, index) => (
-                  <div key={index} className="rounded-md bg-primary/10 p-3 text-sm text-primary">{answer}</div>
+                  <div key={index} className="rounded-md bg-primary/10 p-3 text-sm text-primary">
+                    {answer}
+                  </div>
                 ))}
-                <Button variant="outline" className="w-full" onClick={() => setDefendAnswers((items) => [...items, "Because it narrows the state and keeps role checks deterministic."])}>
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={() =>
+                    setDefendAnswers((items) => [
+                      ...items,
+                      "Because it narrows the state and keeps role checks deterministic.",
+                    ])
+                  }
+                >
                   Add mock answer
                 </Button>
               </CardContent>

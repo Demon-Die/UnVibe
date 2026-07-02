@@ -11,7 +11,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   }, [darkMode]);
 
   return (
-    <div className="min-h-screen w-full relative">
+    <div className="relative min-h-screen w-full">
       <div
         className="absolute inset-0 z-0"
         style={{ background: "var(--gradient-radial)" }}

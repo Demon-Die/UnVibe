@@ -9,12 +9,13 @@
  * 5. Schedules a Defend session
  */
 
-import { Job, Worker, Queue, ConnectionOptions } from 'bullmq';
-import { PrismaClient } from '@prisma/client';
-import pino from 'pino';
-import { aiClient, AIClientError } from './ai-client';
+import { Job, Worker, Queue, ConnectionOptions } from "bullmq";
+import { PrismaClient } from "@prisma/client";
+import pino from "pino";
+import { aiClient, AIClientError } from "./ai-client";
+import { calculateIRS } from "./irs-engine";
 
-const logger = pino({ name: 'submission-worker' });
+const logger = pino({ name: "submission-worker" });
 
 // ---------------------------------------------------------------------------
 // Types
@@ -44,9 +45,9 @@ export function createSubmissionWorker(
   connection: ConnectionOptions,
 ): Worker<SubmissionJobData, SubmissionJobResult> {
   const worker = new Worker<SubmissionJobData, SubmissionJobResult>(
-    'submissions',
+    "submissions",
     async (job: Job<SubmissionJobData>) => {
-      logger.info({ jobId: job.id, submissionId: job.data.submissionId }, 'Processing submission');
+      logger.info({ jobId: job.id, submissionId: job.data.submissionId }, "Processing submission");
 
       const { submissionId, code, originalCode, moduleId, userId, language } = job.data;
 
@@ -55,19 +56,16 @@ export function createSubmissionWorker(
         const diffResult = await aiClient.diffCode({
           originalCode,
           updatedCode: code,
-          language: language ?? 'python',
+          language: language ?? "python",
         });
 
-        logger.info(
-          { jobId: job.id, overallScore: diffResult.overallScore },
-          'Diff scoring complete',
-        );
+        logger.info({ jobId: job.id, overallScore: diffResult.overallScore }, "Diff scoring complete");
 
         // 2. Update Submission record with score and feedback
         await prisma.submission.update({
           where: { id: submissionId },
           data: {
-            status: 'scored',
+            status: "scored",
             feedback: JSON.stringify({
               overallScore: diffResult.overallScore,
               dimensions: diffResult.dimensions,
@@ -76,7 +74,7 @@ export function createSubmissionWorker(
           },
         });
 
-        logger.info({ jobId: job.id, submissionId }, 'Submission score saved');
+        logger.info({ jobId: job.id, submissionId }, "Submission score saved");
 
         // 3. Trigger IRS recalculation via the IRS engine
         //    (called asynchronously — the IRS service handles the actual calc)
@@ -91,13 +89,15 @@ export function createSubmissionWorker(
           defendScheduled,
         };
       } catch (err) {
-        logger.error({ jobId: job.id, err }, 'Submission processing failed');
+        logger.error({ jobId: job.id, err }, "Submission processing failed");
 
         // Mark submission as failed
-        await prisma.submission.update({
-          where: { id: submissionId },
-          data: { status: 'failed' },
-        }).catch((e: unknown) => logger.error({ err: e }, 'Failed to update submission status'));
+        await prisma.submission
+          .update({
+            where: { id: submissionId },
+            data: { status: "failed" },
+          })
+          .catch((e: unknown) => logger.error({ err: e }, "Failed to update submission status"));
 
         if (err instanceof AIClientError) {
           // Re-throw so BullMQ can retry according to its configured retry policy
@@ -112,12 +112,12 @@ export function createSubmissionWorker(
     },
   );
 
-  worker.on('completed', (job: Job) => {
-    logger.info({ jobId: job.id, result: job.returnvalue }, 'Submission job completed');
+  worker.on("completed", (job: Job) => {
+    logger.info({ jobId: job.id, result: job.returnvalue }, "Submission job completed");
   });
 
-  worker.on('failed', (job: Job | undefined, err: Error) => {
-    logger.error({ jobId: job?.id, err: err.message }, 'Submission job failed');
+  worker.on("failed", (job: Job | undefined, err: Error) => {
+    logger.error({ jobId: job?.id, err: err.message }, "Submission job failed");
   });
 
   return worker;
@@ -130,7 +130,7 @@ export function createSubmissionWorker(
 async function triggerIRSRecalculation(prisma: PrismaClient, userId: string): Promise<void> {
   // Calculate aggregate score from all scored submissions
   const submissions = await prisma.submission.findMany({
-    where: { userId, status: 'scored' },
+    where: { userId, status: "scored" },
     select: { feedback: true },
   });
 
@@ -141,7 +141,7 @@ async function triggerIRSRecalculation(prisma: PrismaClient, userId: string): Pr
     if (sub.feedback) {
       try {
         const parsed = JSON.parse(sub.feedback);
-        if (typeof parsed.overallScore === 'number') {
+        if (typeof parsed.overallScore === "number") {
           totalScore += parsed.overallScore;
           scoredCount++;
         }
@@ -165,7 +165,7 @@ async function triggerIRSRecalculation(prisma: PrismaClient, userId: string): Pr
     },
   });
 
-  logger.info({ userId, averageScore, scoredCount }, 'IRS score recalculated');
+  logger.info({ userId, averageScore, scoredCount }, "IRS score recalculated");
 }
 
 // ---------------------------------------------------------------------------
@@ -181,11 +181,11 @@ async function scheduleDefendSession(
   try {
     // Check if a defend session already exists for this (user, module) pair
     const existing = await prisma.defendSession.findFirst({
-      where: { userId, moduleId, status: { notIn: ['completed', 'expired'] } },
+      where: { userId, moduleId, status: { notIn: ["completed", "expired"] } },
     });
 
     if (existing) {
-      logger.info({ userId, moduleId }, 'Active defend session already exists — skipping');
+      logger.info({ userId, moduleId }, "Active defend session already exists — skipping");
       return false;
     }
 
@@ -194,15 +194,15 @@ async function scheduleDefendSession(
       data: {
         userId,
         moduleId,
-        status: 'pending',
+        status: "pending",
         conversation: [],
       },
     });
 
-    logger.info({ userId, moduleId, submissionId }, 'Defend session scheduled');
+    logger.info({ userId, moduleId, submissionId }, "Defend session scheduled");
     return true;
   } catch (err) {
-    logger.error({ err, userId, moduleId }, 'Failed to schedule defend session');
+    logger.error({ err, userId, moduleId }, "Failed to schedule defend session");
     return false;
   }
 }
