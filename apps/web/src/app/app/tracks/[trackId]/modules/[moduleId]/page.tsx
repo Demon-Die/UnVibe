@@ -2,36 +2,42 @@
 
 import { PageHeader } from "@/components/app/page-header";
 import { LoadingPanel } from "@/components/app/loading-panel";
-import { Badge } from "@/components/ui/badge";
 import { ModulePlayer } from "@/components/features/module-player";
-import { useModuleQuery } from "@/lib/mock-data/hooks";
+import { trpc } from "@/lib/trpc/client";
 
 export default function ModulePage({ params }: { params: { trackId: string; moduleId: string } }) {
-  const { data, isLoading } = useModuleQuery(params.trackId, params.moduleId);
+  const { data: trackData, isLoading: trackLoading } = trpc.tracks.getById.useQuery({ id: params.trackId });
+  const { data: dbModule, isLoading: moduleLoading } = trpc.modules.getById.useQuery({ id: params.moduleId });
 
-  if (isLoading || !data) return <LoadingPanel label="Loading module player" />;
+  const isLoading = trackLoading || moduleLoading;
+
+  if (isLoading || !dbModule) return <LoadingPanel label="Loading module player" />;
+
+  const moduleForPlayer = {
+    id: dbModule.id,
+    trackId: dbModule.trackId,
+    title: dbModule.title,
+    summary: dbModule.content,
+    order: dbModule.order,
+    estimatedMinutes: 30,
+    sourceCode: dbModule.content,
+    starterCode: dbModule.content,
+    language: "typescript",
+    concepts: [],
+  };
 
   return (
     <>
       <PageHeader
-        eyebrow={data.track.title}
-        title={data.module.title}
-        description={data.module.summary}
-        action={
-          <div className="flex flex-wrap gap-2">
-            {data.module.concepts.map((item) => (
-              <Badge key={item} variant="secondary">
-                {item}
-              </Badge>
-            ))}
-          </div>
-        }
+        eyebrow={trackData?.title ?? "Track"}
+        title={dbModule.title}
+        description={dbModule.content}
       />
       <ModulePlayer
-        module={data.module}
-        annotations={data.annotations}
-        quiz={data.quiz}
-        diffLines={data.diffLines}
+        module={moduleForPlayer}
+        annotations={[]}
+        quiz={[]}
+        diffLines={[]}
       />
     </>
   );
