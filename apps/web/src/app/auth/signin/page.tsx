@@ -7,23 +7,29 @@ import { Github, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { trpc } from "@/lib/trpc/client";
+import { LoadingPanel } from "@/components/app/loading-panel";
+import { useAuthStore } from "@/stores/auth-store";
 
 export default function SignInPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
-  const signInQuery = trpc.auth.signIn.useQuery(
-    { email: email || "demo@unvibe.dev" },
-    { enabled: false },
-  );
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const { signIn } = useAuthStore();
 
-  const handleSignIn = () => {
-    signInQuery.refetch().then((result) => {
-      if (result.data) {
-        router.push("/app/dashboard");
-      }
-    });
+  const handleSignIn = async () => {
+    setLoading(true);
+    setError("");
+    const ok = await signIn(email || "demo@unvibe.dev");
+    setLoading(false);
+    if (ok) {
+      router.push("/app/dashboard");
+    } else {
+      setError("Could not sign in. Check the email address.");
+    }
   };
+
+  if (loading) return <LoadingPanel label="Signing in" />;
 
   return (
     <main className="surface-grid flex min-h-screen items-center justify-center p-4">
@@ -36,7 +42,7 @@ export default function SignInPage() {
             <span className="font-semibold">UnVibe</span>
           </Link>
           <CardTitle className="text-2xl">Sign in</CardTitle>
-          <p className="text-sm text-muted-foreground">Use OAuth later, or enter the mock workspace now.</p>
+          <p className="text-sm text-muted-foreground">Enter your email to begin training.</p>
         </CardHeader>
         <CardContent className="space-y-3">
           <Button className="w-full" variant="outline" onClick={handleSignIn}>
@@ -49,13 +55,14 @@ export default function SignInPage() {
           </Button>
           <div className="grid gap-2 pt-3">
             <Input
-              placeholder="email@company.com"
+              placeholder="demo@unvibe.dev"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
+            {error && <p className="text-sm text-destructive">{error}</p>}
             <Button onClick={handleSignIn}>
-              Enter mock workspace
+              Sign in
             </Button>
           </div>
           <p className="pt-2 text-center text-sm text-muted-foreground">
