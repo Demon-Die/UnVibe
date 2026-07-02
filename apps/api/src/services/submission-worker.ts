@@ -13,6 +13,7 @@ import { Job, Worker, Queue, ConnectionOptions } from "bullmq";
 import { PrismaClient } from "@prisma/client";
 import pino from "pino";
 import { aiClient, AIClientError } from "./ai-client";
+import { calculateIRS } from "./irs-engine";
 
 const logger = pino({ name: "submission-worker" });
 

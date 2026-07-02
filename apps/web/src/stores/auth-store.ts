@@ -2,15 +2,16 @@
 
 import { create } from "zustand";
 
-interface User {
+interface SessionData {
   id: string;
   name: string | null;
   email: string | null;
   image: string | null;
+  sessionToken: string | null;
 }
 
 interface AuthStore {
-  user: User | null;
+  user: SessionData | null;
   isLoading: boolean;
   signIn: (email: string) => Promise<boolean>;
   signUp: (name: string, email: string) => Promise<boolean>;
@@ -21,7 +22,7 @@ interface AuthStore {
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 
-export const useAuthStore = create<AuthStore>((set, get) => ({
+export const useAuthStore = create<AuthStore>((set) => ({
   user: null,
   isLoading: true,
 
@@ -40,13 +41,17 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
 
   checkSession: async () => {
     try {
-      const res = await fetch(`${API_URL}/trpc/auth.getSession`, {
-        credentials: "include",
-      });
+      const stored = localStorage.getItem("unvibe_session");
+      const token = stored ? JSON.parse(stored)?.sessionToken : null;
+      const headers: Record<string, string> = { "Content-Type": "application/json" };
+      if (token) headers["Authorization"] = `Bearer ${token}`;
+
+      const res = await fetch(`${API_URL}/trpc/auth.getSession`, { headers });
       const json = await res.json();
       if (json?.result?.data?.user) {
-        set({ user: json.result.data.user });
-        localStorage.setItem("unvibe_session", JSON.stringify(json.result.data.user));
+        const userData = { ...json.result.data.user, sessionToken: token };
+        set({ user: userData });
+        localStorage.setItem("unvibe_session", JSON.stringify(userData));
       } else {
         set({ user: null });
         localStorage.removeItem("unvibe_session");
@@ -58,14 +63,22 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
 
   signIn: async (email: string) => {
     try {
-      const res = await fetch(
-        `${API_URL}/trpc/auth.signIn?input=${encodeURIComponent(JSON.stringify({ email }))}`,
-        { credentials: "include" },
-      );
+      const res = await fetch(`${API_URL}/trpc/auth.signIn`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ input: { email } }),
+      });
       const json = await res.json();
-      if (json?.result?.data?.user) {
-        set({ user: json.result.data.user });
-        localStorage.setItem("unvibe_session", JSON.stringify(json.result.data.user));
+      if (json?.result?.data?.user && json?.result?.data?.sessionToken) {
+        const sessionData = {
+          id: json.result.data.user.id,
+          name: json.result.data.user.name,
+          email: json.result.data.user.email,
+          image: json.result.data.user.image ?? null,
+          sessionToken: json.result.data.sessionToken,
+        };
+        set({ user: sessionData });
+        localStorage.setItem("unvibe_session", JSON.stringify(sessionData));
         return true;
       }
       return false;
@@ -79,15 +92,19 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
       const res = await fetch(`${API_URL}/trpc/auth.signUp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
-          input: { name, email },
-        }),
+        body: JSON.stringify({ input: { name, email } }),
       });
       const json = await res.json();
-      if (json?.result?.data?.user) {
-        set({ user: json.result.data.user });
-        localStorage.setItem("unvibe_session", JSON.stringify(json.result.data.user));
+      if (json?.result?.data?.user && json?.result?.data?.sessionToken) {
+        const sessionData = {
+          id: json.result.data.user.id,
+          name: json.result.data.user.name,
+          email: json.result.data.user.email,
+          image: json.result.data.user.image ?? null,
+          sessionToken: json.result.data.sessionToken,
+        };
+        set({ user: sessionData });
+        localStorage.setItem("unvibe_session", JSON.stringify(sessionData));
         return true;
       }
       return false;
@@ -98,10 +115,14 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
 
   signOut: async () => {
     try {
+      const stored = localStorage.getItem("unvibe_session");
+      const token = stored ? JSON.parse(stored)?.sessionToken : null;
+      const headers: Record<string, string> = { "Content-Type": "application/json" };
+      if (token) headers["Authorization"] = `Bearer ${token}`;
+
       await fetch(`${API_URL}/trpc/auth.signOut`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
+        headers,
       });
     } catch {
       // Graceful — always clear local state

@@ -22,11 +22,13 @@ const phases = [
 
 export function ModulePlayer({
   module,
+  moduleId,
   annotations,
   quiz,
   diffLines,
 }: {
   module: MockModule;
+  moduleId: string;
   annotations: Annotation[];
   quiz: QuizQuestion[];
   diffLines: DiffLine[];
@@ -113,7 +115,7 @@ export function ModulePlayer({
                 <QuizUI questions={quiz} />
               </CardContent>
             </Card>
-            <CodeSubmission />
+            <CodeSubmission moduleId={moduleId} />
             <Button className="w-full" variant="secondary" onClick={() => setPhase("defend")}>
               Start defend
             </Button>

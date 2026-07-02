@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { protectedProcedure, router, publicProcedure } from "../trpc";
+import { calculateIRS } from "../services/irs-engine";
 
 export const irsRouter = router({
   getScore: protectedProcedure.query(async ({ ctx }) => {
@@ -70,40 +71,13 @@ export const irsRouter = router({
   recalculate: protectedProcedure.mutation(async ({ ctx }) => {
     const userId = ctx.session.user.id;
 
-    // Get all scored submissions
-    const submissions = await ctx.prisma.submission.findMany({
-      where: { userId, status: "scored" },
-      select: { feedback: true },
-    });
+    const result = await calculateIRS(ctx.prisma, userId);
 
-    let totalScore = 0;
-    let scoredCount = 0;
-
-    for (const sub of submissions) {
-      if (sub.feedback) {
-        try {
-          const parsed = JSON.parse(sub.feedback) as { overallScore?: number };
-          if (typeof parsed.overallScore === "number") {
-            totalScore += parsed.overallScore;
-            scoredCount++;
-          }
-        } catch {
-          // Skip unparseable feedback
-        }
-      }
-    }
-
-    const averageScore = scoredCount > 0 ? Math.round((totalScore / scoredCount) * 100) : 0;
-
-    // Create new IRS score record
     const score = await ctx.prisma.iRSScore.create({
       data: {
         userId,
-        score: averageScore,
-        details: {
-          submissionsScored: scoredCount,
-          lastCalculated: new Date().toISOString(),
-        },
+        score: result.score,
+        details: result.details,
       },
     });
 

@@ -12,6 +12,18 @@ export function TRPCProvider({ children }: { children: React.ReactNode }) {
       links: [
         httpBatchLink({
           url: `${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001"}/trpc`,
+          headers: () => {
+            try {
+              const stored = localStorage.getItem("unvibe_session");
+              if (stored) {
+                const { sessionToken } = JSON.parse(stored);
+                if (sessionToken) return { Authorization: `Bearer ${sessionToken}` };
+              }
+            } catch {
+              // localStorage may be unavailable (SSR, private browsing)
+            }
+            return {};
+          },
         }),
       ],
     }),

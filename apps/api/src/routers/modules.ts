@@ -27,6 +27,12 @@ export const modulesRouter = router({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      // Fetch module content for comparison
+      const module = await ctx.prisma.module.findUnique({
+        where: { id: input.moduleId },
+      });
+      if (!module) throw new TRPCError({ code: "NOT_FOUND", message: "Module not found" });
+
       // Create a submission with pending status
       const submission = await ctx.prisma.submission.create({
         data: {
@@ -44,7 +50,7 @@ export const modulesRouter = router({
           userId: ctx.session.user.id,
           moduleId: input.moduleId,
           code: input.code,
-          originalCode: "", // Will be populated by the worker from the module content
+          originalCode: module.content,
         });
       }
 
