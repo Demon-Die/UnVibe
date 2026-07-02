@@ -1,5 +1,6 @@
 import { randomBytes } from "node:crypto";
 import { z } from "zod";
+import bcrypt from "bcryptjs";
 import { TRPCError } from "@trpc/server";
 import { publicProcedure, protectedProcedure, router } from "../trpc";
 
@@ -13,13 +14,24 @@ function createSessionExpiry(): Date {
 
 export const authRouter = router({
   signIn: publicProcedure
-    .input(z.object({ email: z.string().email() }))
+    .input(
+      z.object({
+        email: z.string().email(),
+        password: z.string().min(1),
+      }),
+    )
     .mutation(async ({ ctx, input }) => {
       const user = await ctx.prisma.user.findUnique({
         where: { email: input.email },
       });
       if (!user)
         throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
+
+      if (user.passwordHash) {
+        const valid = await bcrypt.compare(input.password, user.passwordHash);
+        if (!valid)
+          throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid password" });
+      }
 
       const sessionToken = generateSessionToken();
       await ctx.prisma.session.create({
@@ -38,6 +50,7 @@ export const authRouter = router({
       z.object({
         name: z.string().min(1),
         email: z.string().email(),
+        password: z.string().min(6),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -50,8 +63,9 @@ export const authRouter = router({
           message: "Email already registered",
         });
 
+      const passwordHash = await bcrypt.hash(input.password, 10);
       const user = await ctx.prisma.user.create({
-        data: { name: input.name, email: input.email },
+        data: { name: input.name, email: input.email, passwordHash },
       });
 
       const sessionToken = generateSessionToken();
