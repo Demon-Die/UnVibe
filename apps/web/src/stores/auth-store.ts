@@ -13,8 +13,8 @@ interface SessionData {
 interface AuthStore {
   user: SessionData | null;
   isLoading: boolean;
-  signIn: (email: string) => Promise<boolean>;
-  signUp: (name: string, email: string) => Promise<boolean>;
+  signIn: (email: string, password: string) => Promise<boolean>;
+  signUp: (name: string, email: string, password: string) => Promise<boolean>;
   signOut: () => void;
   checkSession: () => Promise<void>;
   restoreSession: () => void;
@@ -61,12 +61,12 @@ export const useAuthStore = create<AuthStore>((set) => ({
     }
   },
 
-  signIn: async (email: string) => {
+  signIn: async (email: string, password: string) => {
     try {
       const res = await fetch(`${API_URL}/trpc/auth.signIn`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ input: { email } }),
+        body: JSON.stringify({ "0": { email, password } }),
       });
       const json = await res.json();
       if (json?.result?.data?.user && json?.result?.data?.sessionToken) {
@@ -87,12 +87,12 @@ export const useAuthStore = create<AuthStore>((set) => ({
     }
   },
 
-  signUp: async (name: string, email: string) => {
+  signUp: async (name: string, email: string, password: string) => {
     try {
       const res = await fetch(`${API_URL}/trpc/auth.signUp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ input: { name, email } }),
+        body: JSON.stringify({ "0": { name, email, password } }),
       });
       const json = await res.json();
       if (json?.result?.data?.user && json?.result?.data?.sessionToken) {
