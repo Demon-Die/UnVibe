@@ -4,26 +4,26 @@
 
 ### 1) Integration Inventory
 
-| System | Type | Purpose | Auth model | Criticality | Evidence |
-|--------|------|---------|------------|-------------|----------|
-| PostgreSQL 16 | Database (relational) | Primary data store for all application data | Password via `DATABASE_URL` connection string | Critical | `infra/docker-compose.yml`, `apps/api/prisma/schema.prisma` |
-| Redis 7 | Cache + Queue + Pub/Sub | BullMQ job queue, Socket.io pub/sub, general caching | None (local, no password configured) | Critical | `infra/docker-compose.yml`, `apps/api/src/index.ts` |
-| OpenRouter API | External API (LLM gateway) | Unified access to 200+ models for code gen, quiz gen, defend Q&A | API key (`OPENROUTER_API_KEY`) | Critical | `.env.example`, `apps/ai-service/app/services/llm_client.py` (IMPLEMENTED) |
-| GitHub OAuth | External API (Auth) | OAuth sign-in for users | Client ID + Secret (`GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`) | High | `apps/web/src/auth.ts` |
-| Google OAuth | External API (Auth) | OAuth sign-in for users | Client ID + Secret (`GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`) | High | `apps/web/src/auth.ts` |
-| Cloudflare R2 | Object Storage | Store code snapshots, PDF reports, assets (planned) | Account ID + Access Key + Secret Key (`R2_*` env vars) | Medium | `.env.example` (not yet used in code) |
-| Resend | External API (Email) | Transactional emails (digest, notifications) — planned | API key (`RESEND_API_KEY`) | Medium | `.env.example` (not yet used in code) |
-| Sentry | Monitoring | Error tracking across web + api | DSN via `SENTRY_DSN_WEB`, `SENTRY_DSN_API` env vars | Low (local dev) | `apps/web/sentry.client.config.ts`, `apps/api/src/index.ts` |
-| PostHog | Analytics | Product analytics | Public key via `NEXT_PUBLIC_POSTHOG_KEY` | Low (local dev) | `.env.example` (not yet used in code) |
-| Judge0 | Self-hosted service | Sandboxed code execution (planned) | [TODO] — self-hosted, not yet deployed | Low (not implemented) | `README.md` tech stack mentions |
+| System         | Type                       | Purpose                                                          | Auth model                                                      | Criticality           | Evidence                                                                   |
+| -------------- | -------------------------- | ---------------------------------------------------------------- | --------------------------------------------------------------- | --------------------- | -------------------------------------------------------------------------- |
+| PostgreSQL 16  | Database (relational)      | Primary data store for all application data                      | Password via `DATABASE_URL` connection string                   | Critical              | `infra/docker-compose.yml`, `apps/api/prisma/schema.prisma`                |
+| Redis 7        | Cache + Queue + Pub/Sub    | BullMQ job queue, Socket.io pub/sub, general caching             | None (local, no password configured)                            | Critical              | `infra/docker-compose.yml`, `apps/api/src/index.ts`                        |
+| OpenRouter API | External API (LLM gateway) | Unified access to 200+ models for code gen, quiz gen, defend Q&A | API key (`OPENROUTER_API_KEY`)                                  | Critical              | `.env.example`, `apps/ai-service/app/services/llm_client.py` (IMPLEMENTED) |
+| GitHub OAuth   | External API (Auth)        | OAuth sign-in for users                                          | Client ID + Secret (`GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`) | High                  | `apps/web/src/auth.ts`                                                     |
+| Google OAuth   | External API (Auth)        | OAuth sign-in for users                                          | Client ID + Secret (`GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`) | High                  | `apps/web/src/auth.ts`                                                     |
+| Cloudflare R2  | Object Storage             | Store code snapshots, PDF reports, assets (planned)              | Account ID + Access Key + Secret Key (`R2_*` env vars)          | Medium                | `.env.example` (not yet used in code)                                      |
+| Resend         | External API (Email)       | Transactional emails (digest, notifications) — planned           | API key (`RESEND_API_KEY`)                                      | Medium                | `.env.example` (not yet used in code)                                      |
+| Sentry         | Monitoring                 | Error tracking across web + api                                  | DSN via `SENTRY_DSN_WEB`, `SENTRY_DSN_API` env vars             | Low (local dev)       | `apps/web/sentry.client.config.ts`, `apps/api/src/index.ts`                |
+| PostHog        | Analytics                  | Product analytics                                                | Public key via `NEXT_PUBLIC_POSTHOG_KEY`                        | Low (local dev)       | `.env.example` (not yet used in code)                                      |
+| Judge0         | Self-hosted service        | Sandboxed code execution (planned)                               | [TODO] — self-hosted, not yet deployed                          | Low (not implemented) | `README.md` tech stack mentions                                            |
 
 ### 2) Data Stores
 
-| Store | Role | Access layer | Key risk | Evidence |
-|-------|------|--------------|----------|----------|
-| PostgreSQL 16 | Primary database — all users, tracks, modules, submissions, defend sessions, IRS scores, war rooms | Prisma ORM via `apps/api` | No connection pooling configured; single `PrismaClient` singleton; no migrations committed | `apps/api/prisma/schema.prisma`, `apps/api/src/index.ts` |
-| Redis 7 | Job queue (BullMQ), real-time pub/sub (Socket.io), caching | `ioredis` via BullMQ + Socket.io adapter | No auth or TLS configured for local dev; no persistence policy set for cache use | `infra/docker-compose.yml`, `apps/api/src/index.ts` |
-| Cloudflare R2 | Object storage for code snapshots, PDF reports — planned | [TODO] — SDK not yet imported | [TODO] — not yet implemented | `.env.example` (env vars defined) |
+| Store         | Role                                                                                               | Access layer                             | Key risk                                                                         | Evidence                                                                                                                 |
+| ------------- | -------------------------------------------------------------------------------------------------- | ---------------------------------------- | -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| PostgreSQL 16 | Primary database — all users, tracks, modules, submissions, defend sessions, IRS scores, war rooms | Prisma ORM via `apps/api`                | No connection pooling configured; single `PrismaClient` singleton                | `apps/api/prisma/schema.prisma`, `apps/api/prisma/migrations/20260701040038_init/migration.sql`, `apps/api/src/index.ts` |
+| Redis 7       | Job queue (BullMQ), real-time pub/sub (Socket.io), caching                                         | `ioredis` via BullMQ + Socket.io adapter | No auth or TLS configured for local dev; no persistence policy set for cache use | `infra/docker-compose.yml`, `apps/api/src/index.ts`                                                                      |
+| Cloudflare R2 | Object storage for code snapshots, PDF reports — planned                                           | [TODO] — SDK not yet imported            | [TODO] — not yet implemented                                                     | `.env.example` (env vars defined)                                                                                        |
 
 ### 3) Secrets and Credentials Handling
 

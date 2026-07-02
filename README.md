@@ -148,12 +148,12 @@ unvibe/
 
 Install these before doing anything else.
 
-| Tool | Version | Install |
-|---|---|---|
-| Node.js | 20 or higher | https://nodejs.org |
-| pnpm | 9 or higher | `npm install -g pnpm` |
-| Python | 3.12 or higher | https://python.org |
-| Docker Desktop | Latest | https://docker.com |
+| Tool           | Version        | Install               |
+| -------------- | -------------- | --------------------- |
+| Node.js        | 20 or higher   | https://nodejs.org    |
+| pnpm           | 9 or higher    | `npm install -g pnpm` |
+| Python         | 3.12 or higher | https://python.org    |
+| Docker Desktop | Latest         | https://docker.com    |
 
 Verify your versions:
 
@@ -260,11 +260,11 @@ pnpm dev
 
 This starts all three apps simultaneously using Turborepo.
 
-| App | URL | Description |
-|---|---|---|
-| Web (frontend) | http://localhost:3000 | The main Next.js application |
-| API (backend) | http://localhost:3001 | The Node.js + tRPC API server |
-| AI Service | http://localhost:8000 | The Python FastAPI AI service |
+| App             | URL                        | Description                          |
+| --------------- | -------------------------- | ------------------------------------ |
+| Web (frontend)  | http://localhost:3000      | The main Next.js application         |
+| API (backend)   | http://localhost:3001      | The Node.js + tRPC API server        |
+| AI Service      | http://localhost:8000      | The Python FastAPI AI service        |
 | AI Service Docs | http://localhost:8000/docs | Auto-generated FastAPI endpoint docs |
 
 If you only want to run one app at a time:
@@ -389,61 +389,61 @@ Cloudflare R2
 
 ### Frontend (apps/web)
 
-| What | Tool |
-|---|---|
-| Framework | Next.js 14 (App Router) |
-| Language | TypeScript |
-| Styling | Tailwind CSS |
-| Components | shadcn/ui |
-| Code editor | Monaco Editor |
-| Animations | Framer Motion |
-| State management | Zustand |
-| Server state + caching | TanStack Query |
-| Real-time | Socket.io Client |
-| Forms + validation | React Hook Form + Zod |
-| Charts | Recharts |
-| Diff viewer | react-diff-viewer-continued |
-| Error tracking | Sentry |
+| What                   | Tool                        |
+| ---------------------- | --------------------------- |
+| Framework              | Next.js 14 (App Router)     |
+| Language               | TypeScript                  |
+| Styling                | Tailwind CSS                |
+| Components             | shadcn/ui                   |
+| Code editor            | Monaco Editor               |
+| Animations             | Framer Motion               |
+| State management       | Zustand                     |
+| Server state + caching | TanStack Query              |
+| Real-time              | Socket.io Client            |
+| Forms + validation     | React Hook Form + Zod       |
+| Charts                 | Recharts                    |
+| Diff viewer            | react-diff-viewer-continued |
+| Error tracking         | Sentry                      |
 
 ### Backend (apps/api)
 
-| What | Tool |
-|---|---|
-| Runtime | Node.js |
-| Framework | Express |
-| API contract | tRPC |
-| Auth | NextAuth.js v5 |
-| Database ORM | Prisma |
-| Job queue | BullMQ (Redis-backed) |
-| Real-time server | Socket.io |
-| PDF generation | Puppeteer |
-| Logging | Pino |
+| What             | Tool                  |
+| ---------------- | --------------------- |
+| Runtime          | Node.js               |
+| Framework        | Express               |
+| API contract     | tRPC                  |
+| Auth             | NextAuth.js v5        |
+| Database ORM     | Prisma                |
+| Job queue        | BullMQ (Redis-backed) |
+| Real-time server | Socket.io             |
+| PDF generation   | Puppeteer             |
+| Logging          | Pino                  |
 
 ### AI Service (apps/ai-service)
 
-| What | Tool |
-|---|---|
-| Language | Python 3.12 |
-| Framework | FastAPI |
-| LLM | Anthropic Claude API |
-| Code execution (sandboxed) | Judge0 (self-hosted) |
-| Diff engine | Python difflib + custom AST scorer |
+| What                       | Tool                               |
+| -------------------------- | ---------------------------------- |
+| Language                   | Python 3.12                        |
+| Framework                  | FastAPI                            |
+| LLM                        | Anthropic Claude API               |
+| Code execution (sandboxed) | Judge0 (self-hosted)               |
+| Diff engine                | Python difflib + custom AST scorer |
 
 ### Data + Infrastructure
 
-| What | Tool |
-|---|---|
-| Primary database | PostgreSQL 16 |
-| Cache + pub/sub | Redis 7 |
-| Object storage | Cloudflare R2 |
-| Monorepo tooling | Turborepo |
-| Package manager | pnpm |
-| Frontend hosting | Vercel |
-| Backend hosting | Railway or Render |
-| CI/CD | GitHub Actions |
-| Error tracking | Sentry |
-| Product analytics | PostHog |
-| Email | Resend |
+| What              | Tool              |
+| ----------------- | ----------------- |
+| Primary database  | PostgreSQL 16     |
+| Cache + pub/sub   | Redis 7           |
+| Object storage    | Cloudflare R2     |
+| Monorepo tooling  | Turborepo         |
+| Package manager   | pnpm              |
+| Frontend hosting  | Vercel            |
+| Backend hosting   | Railway or Render |
+| CI/CD             | GitHub Actions    |
+| Error tracking    | Sentry            |
+| Product analytics | PostHog           |
+| Email             | Resend            |
 
 ---
 
@@ -587,33 +587,33 @@ What ships: UnVibe Marketplace for community modules, white-label option for boo
 
 ## Feature List
 
-| Feature | Added in | Tier |
-|---|---|---|
-| Authentication (Email + OAuth) | 1.0 | Free |
-| Learning Tracks (Web, Backend, DSA) | 1.0 | Free |
-| AI Code Generator | 1.0 | Free |
-| Decode Phase (Annotation + Quiz) | 1.0 | Free |
-| Rebuild Phase (Editor + Diff Engine) | 1.0 | Free |
-| Defend Phase (Async Text Q&A) | 1.0 | Free |
-| Personal Dashboard + Streak | 1.0 | Free |
-| Irreplaceability Score (IRS) | 1.1 | Free |
-| Employer IRS Report (PDF) | 1.1 | Pro |
-| Shareable IRS Profile | 1.1 | Free |
-| War Rooms (Weekly Challenges) | 1.2 | Free |
-| Peer Review System | 1.2 | Free |
-| Concept Autopsies | 1.5 | Pro |
-| Live Defend (AI Voice Interviewer) | 1.5 | Pro |
-| Blindspot Map | 1.5 | Pro |
-| Interview Simulation | 1.5 | Pro |
-| Company-Specific Prep Tracks | 1.5 | Pro |
-| Instructor Portal | 2.0 | Instructor |
-| Company Portal + Private War Rooms | 2.0 | Enterprise |
-| Multi-language Support | 2.0 | Free/Pro |
-| PWA / Offline Mode | 2.0 | Pro |
-| Localization (5 languages) | 2.0 | Free |
-| Marketplace | 2.5 | Marketplace |
-| VS Code / JetBrains Plugin | 2.5 | Pro |
-| White-label | 2.5 | Enterprise |
+| Feature                              | Added in | Tier        |
+| ------------------------------------ | -------- | ----------- |
+| Authentication (Email + OAuth)       | 1.0      | Free        |
+| Learning Tracks (Web, Backend, DSA)  | 1.0      | Free        |
+| AI Code Generator                    | 1.0      | Free        |
+| Decode Phase (Annotation + Quiz)     | 1.0      | Free        |
+| Rebuild Phase (Editor + Diff Engine) | 1.0      | Free        |
+| Defend Phase (Async Text Q&A)        | 1.0      | Free        |
+| Personal Dashboard + Streak          | 1.0      | Free        |
+| Irreplaceability Score (IRS)         | 1.1      | Free        |
+| Employer IRS Report (PDF)            | 1.1      | Pro         |
+| Shareable IRS Profile                | 1.1      | Free        |
+| War Rooms (Weekly Challenges)        | 1.2      | Free        |
+| Peer Review System                   | 1.2      | Free        |
+| Concept Autopsies                    | 1.5      | Pro         |
+| Live Defend (AI Voice Interviewer)   | 1.5      | Pro         |
+| Blindspot Map                        | 1.5      | Pro         |
+| Interview Simulation                 | 1.5      | Pro         |
+| Company-Specific Prep Tracks         | 1.5      | Pro         |
+| Instructor Portal                    | 2.0      | Instructor  |
+| Company Portal + Private War Rooms   | 2.0      | Enterprise  |
+| Multi-language Support               | 2.0      | Free/Pro    |
+| PWA / Offline Mode                   | 2.0      | Pro         |
+| Localization (5 languages)           | 2.0      | Free        |
+| Marketplace                          | 2.5      | Marketplace |
+| VS Code / JetBrains Plugin           | 2.5      | Pro         |
+| White-label                          | 2.5      | Enterprise  |
 
 ---
 

@@ -1,0 +1,301 @@
+{
+  "_meta": {
+    "updated_at": "2026-06-30T22:30:00.000Z",
+    "version": 1
+  },
+  "entries": {
+    "package.json": {
+      "exports": [],
+      "imports": ["turbo"],
+      "type": "config"
+    },
+    "turbo.json": {
+      "exports": [],
+      "imports": [],
+      "type": "config"
+    },
+    "tsconfig.base.json": {
+      "exports": [],
+      "imports": [],
+      "type": "config"
+    },
+    "pnpm-workspace.yaml": {
+      "exports": [],
+      "imports": [],
+      "type": "config"
+    },
+    ".env.example": {
+      "exports": [],
+      "imports": [],
+      "type": "config"
+    },
+    "infra/docker-compose.yml": {
+      "exports": [],
+      "imports": [],
+      "type": "config"
+    },
+    "apps/ai-service/app/main.py": {
+      "exports": ["app"],
+      "imports": [
+        "fastapi",
+        "fastapi.middleware.cors",
+        "dotenv",
+        "os",
+        "app.routes.generate",
+        "app.routes.quiz",
+        "app.routes.defend",
+        "app.routes.diff"
+      ],
+      "type": "entry-point"
+    },
+    "apps/ai-service/app/config.py": {
+      "exports": ["Settings", "get_settings"],
+      "imports": ["os", "functools"],
+      "type": "module"
+    },
+    "apps/ai-service/app/services/llm_client.py": {
+      "exports": ["LLMClientError", "LLMClient", "llm"],
+      "imports": ["time", "typing", "openai", "loguru", "app.config"],
+      "type": "module"
+    },
+    "apps/ai-service/app/services/prompt_manager.py": {
+      "exports": [
+        "PromptNotFoundError",
+        "load_prompt_template",
+        "render_prompt",
+        "list_available_templates",
+        "strip_markdown_fence"
+      ],
+      "imports": ["os", "functools", "pathlib", "typing", "loguru"],
+      "type": "module"
+    },
+    "apps/ai-service/app/services/ast_differ.py": {
+      "exports": ["DimensionScore", "DiffResult", "AstDiffer", "differ"],
+      "imports": ["ast", "difflib", "re", "dataclasses", "typing"],
+      "type": "module"
+    },
+    "apps/ai-service/app/services/__init__.py": {
+      "exports": [],
+      "imports": [],
+      "type": "module"
+    },
+    "apps/ai-service/app/routes/generate.py": {
+      "exports": ["router"],
+      "imports": [
+        "fastapi",
+        "pydantic",
+        "loguru",
+        "app.config",
+        "app.services.llm_client",
+        "app.services.prompt_manager"
+      ],
+      "type": "module"
+    },
+    "apps/ai-service/app/routes/quiz.py": {
+      "exports": ["router"],
+      "imports": [
+        "json",
+        "typing",
+        "fastapi",
+        "pydantic",
+        "loguru",
+        "app.config",
+        "app.services.llm_client",
+        "app.services.prompt_manager"
+      ],
+      "type": "module"
+    },
+    "apps/ai-service/app/routes/diff.py": {
+      "exports": ["router"],
+      "imports": ["fastapi", "pydantic", "loguru", "app.services.ast_differ"],
+      "type": "module"
+    },
+    "apps/ai-service/app/routes/defend.py": {
+      "exports": ["router"],
+      "imports": [
+        "json",
+        "typing",
+        "fastapi",
+        "pydantic",
+        "loguru",
+        "app.config",
+        "app.services.llm_client",
+        "app.services.prompt_manager"
+      ],
+      "type": "module"
+    },
+    "apps/ai-service/app/prompts/v1/code_generation.txt": {
+      "exports": [],
+      "imports": [],
+      "type": "template"
+    },
+    "apps/ai-service/app/prompts/v1/quiz_generation.txt": {
+      "exports": [],
+      "imports": [],
+      "type": "template"
+    },
+    "apps/ai-service/app/prompts/v1/defend_question.txt": {
+      "exports": [],
+      "imports": [],
+      "type": "template"
+    },
+    "apps/ai-service/app/prompts/v1/defend_evaluation.txt": {
+      "exports": [],
+      "imports": [],
+      "type": "template"
+    },
+    "apps/ai-service/requirements.txt": {
+      "exports": [],
+      "imports": [],
+      "type": "config"
+    },
+    "apps/ai-service/pytest.ini": {
+      "exports": [],
+      "imports": [],
+      "type": "config"
+    },
+    "apps/ai-service/tests/conftest.py": {
+      "exports": ["mock_env", "sample_code", "sample_rebuild", "sample_class_code", "quiz_code"],
+      "imports": ["os", "pytest"],
+      "type": "test"
+    },
+    "apps/ai-service/tests/test_generate.py": {
+      "exports": [],
+      "imports": ["pytest", "httpx", "app.main"],
+      "type": "test"
+    },
+    "apps/ai-service/tests/test_quiz.py": {
+      "exports": [],
+      "imports": ["pytest", "httpx", "app.main"],
+      "type": "test"
+    },
+    "apps/ai-service/tests/test_diff.py": {
+      "exports": [],
+      "imports": ["pytest", "app.services.ast_differ"],
+      "type": "test"
+    },
+    "apps/ai-service/tests/test_defend.py": {
+      "exports": [],
+      "imports": ["pytest", "httpx", "app.main"],
+      "type": "test"
+    },
+    "apps/api/package.json": {
+      "exports": [],
+      "imports": [],
+      "type": "config"
+    },
+    "apps/api/tsconfig.json": {
+      "exports": [],
+      "imports": [],
+      "type": "config"
+    },
+    "apps/api/jest.config.ts": {
+      "exports": [],
+      "imports": [],
+      "type": "config"
+    },
+    "apps/api/prisma/schema.prisma": {
+      "exports": [],
+      "imports": [],
+      "type": "data"
+    },
+    "apps/api/src/index.ts": {
+      "exports": ["AppRouter"],
+      "imports": [
+        "express",
+        "cors",
+        "@trpc/server/adapters/express",
+        "http",
+        "socket.io",
+        "pino",
+        "@sentry/node",
+        "@prisma/client",
+        "bullmq",
+        "net",
+        "./trpc",
+        "./services/submission-worker",
+        "dotenv"
+      ],
+      "type": "entry-point"
+    },
+    "apps/api/src/trpc.ts": {
+      "exports": [
+        "t",
+        "router",
+        "publicProcedure",
+        "middleware",
+        "mergeRouters",
+        "createCallerFactory",
+        "routerFactory"
+      ],
+      "imports": ["@trpc/server", "zod"],
+      "type": "module"
+    },
+    "apps/api/src/services/ai-client.ts": {
+      "exports": ["AIClientError", "AIClient", "aiClient"],
+      "imports": ["pino"],
+      "type": "module"
+    },
+    "apps/api/src/services/submission-worker.ts": {
+      "exports": ["SubmissionJobData", "SubmissionJobResult", "createSubmissionWorker"],
+      "imports": ["bullmq", "@prisma/client", "pino", "./ai-client"],
+      "type": "module"
+    },
+    "apps/api/src/__tests__/ai-client.test.ts": {
+      "exports": [],
+      "imports": ["../services/ai-client"],
+      "type": "test"
+    },
+    "packages/types/src/index.ts": {
+      "exports": ["User", "Track", "Module", "Submission", "DefendSession", "WarRoom", "IRSScore"],
+      "imports": [],
+      "type": "type-def"
+    },
+    "packages/types/package.json": {
+      "exports": [],
+      "imports": [],
+      "type": "config"
+    },
+    "apps/web/package.json": {
+      "exports": [],
+      "imports": [],
+      "type": "config"
+    },
+    "apps/web/src/app/layout.tsx": {
+      "exports": [],
+      "imports": ["react", "next/font", "./globals.css", "./providers", "@/components/app/theme-provider"],
+      "type": "entry-point"
+    },
+    "apps/web/src/app/page.tsx": {
+      "exports": [],
+      "imports": [],
+      "type": "script"
+    },
+    "apps/web/src/app/providers.tsx": {
+      "exports": [],
+      "imports": ["react", "next-auth", "@tanstack/react-query", "@/lib/socket/client", "@/lib/trpc/client"],
+      "type": "module"
+    },
+    "apps/web/src/auth.ts": {
+      "exports": ["auth", "handlers", "signIn", "signOut"],
+      "imports": [
+        "next-auth",
+        "next-auth/providers/github",
+        "next-auth/providers/google",
+        "@auth/prisma-adapter",
+        "@prisma/client"
+      ],
+      "type": "module"
+    },
+    "apps/web/src/lib/trpc/client.ts": {
+      "exports": [],
+      "imports": ["@trpc/client", "@tanstack/react-query"],
+      "type": "module"
+    },
+    "apps/web/src/lib/socket/client.ts": {
+      "exports": [],
+      "imports": ["socket.io-client"],
+      "type": "module"
+    }
+  }
+}

@@ -31,7 +31,10 @@ export default function LandingPage() {
           </Link>
           <div className="flex items-center gap-3">
             <ThemeController />
-            <Link href="/auth/signin" className="hidden text-sm text-muted-foreground transition hover:text-foreground sm:inline">
+            <Link
+              href="/auth/signin"
+              className="hidden text-sm text-muted-foreground transition hover:text-foreground sm:inline"
+            >
               Sign in
             </Link>
             <Button asChild>
@@ -52,7 +55,8 @@ export default function LandingPage() {
               Learn code until you can explain every decision.
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-muted-foreground">
-              UnVibe turns passive tutorials into an active sequence: read production code, rebuild it, then defend your reasoning in live sessions.
+              UnVibe turns passive tutorials into an active sequence: read production code, rebuild it, then
+              defend your reasoning in live sessions.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Button asChild size="lg">
@@ -70,7 +74,9 @@ export default function LandingPage() {
           <div className="rounded-lg border border-border bg-card/90 p-4 shadow-2xl shadow-black/20 backdrop-blur">
             <div className="mb-4 flex items-center justify-between border-b border-border pb-3">
               <div>
-                <p className="font-mono text-xs uppercase tracking-[0.22em] text-muted-foreground">live module</p>
+                <p className="font-mono text-xs uppercase tracking-[0.22em] text-muted-foreground">
+                  live module
+                </p>
                 <h2 className="font-semibold">Auth guard rebuild</h2>
               </div>
               <Badge className="bg-accent text-accent-foreground">IRS 82</Badge>
@@ -79,7 +85,10 @@ export default function LandingPage() {
               {signals.map((signal, index) => {
                 const Icon = signal.icon;
                 return (
-                  <div key={signal.label} className="grid grid-cols-[42px_1fr] gap-3 rounded-md border border-border bg-background/70 p-3">
+                  <div
+                    key={signal.label}
+                    className="grid grid-cols-[42px_1fr] gap-3 rounded-md border border-border bg-background/70 p-3"
+                  >
                     <div className="flex h-10 w-10 items-center justify-center rounded-md bg-primary/10 text-primary">
                       <Icon className="h-5 w-5" />
                     </div>
@@ -95,8 +104,12 @@ export default function LandingPage() {
               })}
             </div>
             <div className="mt-4 rounded-md border border-border bg-black p-4 font-mono text-xs leading-6 text-cyan-100">
-              <p><span className="text-amber-300">const</span> session = defend(rebuild);</p>
-              <p><span className="text-emerald-300">score</span>.update(session.reasoning);</p>
+              <p>
+                <span className="text-amber-300">const</span> session = defend(rebuild);
+              </p>
+              <p>
+                <span className="text-emerald-300">score</span>.update(session.reasoning);
+              </p>
               <p className="text-muted-foreground">{"// next question streams into War Room"}</p>
             </div>
           </div>
@@ -106,11 +119,11 @@ export default function LandingPage() {
           {featureCards.map((feature) => {
             const Icon = feature.icon;
             return (
-            <div key={feature.title} className="rounded-lg border border-border bg-card p-5">
-              <Icon className="mb-5 h-5 w-5 text-primary" />
-              <h3 className="font-semibold">{feature.title}</h3>
-              <p className="mt-2 text-sm leading-6 text-muted-foreground">{feature.copy}</p>
-            </div>
+              <div key={feature.title} className="rounded-lg border border-border bg-card p-5">
+                <Icon className="mb-5 h-5 w-5 text-primary" />
+                <h3 className="font-semibold">{feature.title}</h3>
+                <p className="mt-2 text-sm leading-6 text-muted-foreground">{feature.copy}</p>
+              </div>
             );
           })}
         </div>

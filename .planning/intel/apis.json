@@ -1,0 +1,64 @@
+{
+  "_meta": {
+    "updated_at": "2026-06-30T22:30:00.000Z",
+    "version": 1
+  },
+  "entries": {
+    "GET /health": {
+      "method": "GET",
+      "path": "/health",
+      "params": [],
+      "file": "apps/ai-service/app/main.py",
+      "description": "AI service health check — returns status and service name"
+    },
+    "POST /generate/": {
+      "method": "POST",
+      "path": "/generate/",
+      "params": ["problem_description", "language", "difficulty"],
+      "file": "apps/ai-service/app/routes/generate.py",
+      "description": "Generate production-grade code using OpenRouter LLM for a given problem"
+    },
+    "POST /quiz/generate": {
+      "method": "POST",
+      "path": "/quiz/generate",
+      "params": ["code", "annotations", "topic", "count"],
+      "file": "apps/ai-service/app/routes/quiz.py",
+      "description": "Generate comprehension quiz with multiple-choice questions from code and annotations"
+    },
+    "POST /diff/": {
+      "method": "POST",
+      "path": "/diff/",
+      "params": ["original_code", "updated_code", "language"],
+      "file": "apps/ai-service/app/routes/diff.py",
+      "description": "Score user rebuild against original solution using AST-based diff engine"
+    },
+    "POST /defend/respond": {
+      "method": "POST",
+      "path": "/defend/respond",
+      "params": ["session_id", "code", "problem_description", "messages"],
+      "file": "apps/ai-service/app/routes/defend.py",
+      "description": "Socratic questioning or evaluation for defend sessions via OpenRouter LLM"
+    },
+    "GET /health (api)": {
+      "method": "GET",
+      "path": "/health",
+      "params": [],
+      "file": "apps/api/src/index.ts",
+      "description": "API backend health check — returns status, service name, and timestamp"
+    },
+    "GET /trpc (api)": {
+      "method": "GET",
+      "path": "/trpc",
+      "params": [],
+      "file": "apps/api/src/index.ts",
+      "description": "tRPC middleware endpoint for type-safe RPC between frontend and backend"
+    },
+    "POST /trpc (api)": {
+      "method": "POST",
+      "path": "/trpc",
+      "params": [],
+      "file": "apps/api/src/index.ts",
+      "description": "tRPC middleware endpoint for type-safe RPC mutations"
+    }
+  }
+}

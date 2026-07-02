@@ -1,0 +1,45 @@
+{
+  "_meta": {
+    "updated_at": "2026-06-30T22:30:00.000Z",
+    "version": 1
+  },
+  "snapshot": {
+    "branch": "Python-Yuvraj",
+    "commit": "f785ee8",
+    "description": "Dev 2 — AI Service full implementation with real OpenRouter LLM calls",
+    "files": {
+      "apps/ai-service/app/main.py": "hashv1",
+      "apps/ai-service/app/config.py": "hashv1",
+      "apps/ai-service/app/services/llm_client.py": "hashv1",
+      "apps/ai-service/app/services/prompt_manager.py": "hashv1",
+      "apps/ai-service/app/services/ast_differ.py": "hashv1",
+      "apps/ai-service/app/routes/generate.py": "hashv1",
+      "apps/ai-service/app/routes/quiz.py": "hashv1",
+      "apps/ai-service/app/routes/diff.py": "hashv1",
+      "apps/ai-service/app/routes/defend.py": "hashv1",
+      "apps/ai-service/app/prompts/v1/code_generation.txt": "hashv1",
+      "apps/ai-service/app/prompts/v1/quiz_generation.txt": "hashv1",
+      "apps/ai-service/app/prompts/v1/defend_question.txt": "hashv1",
+      "apps/ai-service/app/prompts/v1/defend_evaluation.txt": "hashv1",
+      "apps/ai-service/tests/conftest.py": "hashv1",
+      "apps/ai-service/tests/test_generate.py": "hashv1",
+      "apps/ai-service/tests/test_quiz.py": "hashv1",
+      "apps/ai-service/tests/test_diff.py": "hashv1",
+      "apps/ai-service/tests/test_defend.py": "hashv1",
+      "apps/ai-service/requirements.txt": "hashv1",
+      "apps/ai-service/pytest.ini": "hashv1",
+      "apps/api/src/services/ai-client.ts": "hashv1",
+      "apps/api/src/services/submission-worker.ts": "hashv1",
+      "apps/api/src/__tests__/ai-client.test.ts": "hashv1",
+      "apps/api/jest.config.ts": "hashv1",
+      "apps/api/src/index.ts": "hashv1",
+      "apps/api/package.json": "hashv1"
+    },
+    "counts": {
+      "python_tests": 28,
+      "typescript_tests": 12,
+      "python_source_files": 10,
+      "typescript_source_files": 6
+    }
+  }
+}

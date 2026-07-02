@@ -1,23 +1,31 @@
-import express from 'express';
-import cors from 'cors';
-import * as trpcExpress from '@trpc/server/adapters/express';
-import { createServer } from 'http';
-import { Server } from 'socket.io';
-import pino from 'pino';
-import * as Sentry from '@sentry/node';
-import { PrismaClient } from '@prisma/client';
-import { Queue } from 'bullmq';
-import net from 'net';
-import { router, publicProcedure } from './trpc';
-import { createContext } from './context';
-import { createSubmissionWorker } from './services/submission-worker';
-import dotenv from 'dotenv';
+import express from "express";
+import cors from "cors";
+import * as trpcExpress from "@trpc/server/adapters/express";
+import { createServer } from "http";
+import { Server } from "socket.io";
+import pino from "pino";
+import * as Sentry from "@sentry/node";
+import { PrismaClient } from "@prisma/client";
+import { Queue } from "bullmq";
+import net from "net";
+import { router, publicProcedure } from "./trpc";
+import { createContext } from "./context";
+import { createSubmissionWorker } from "./services/submission-worker";
+import { authRouter } from "./routers/auth";
+import { tracksRouter } from "./routers/tracks";
+import { modulesRouter } from "./routers/modules";
+import { irsRouter } from "./routers/irs";
+import { warRoomRouter } from "./routers/warRoom";
+import { submissionsRouter } from "./routers/submissions";
+import { profileRouter } from "./routers/profile";
+import { judge0Router } from "./routers/judge0";
+import dotenv from "dotenv";
 
-dotenv.config({ path: '../../.env' });
+dotenv.config({ path: "../../.env.local" });
 
 const logger = pino({
   transport: {
-    target: 'pino-pretty',
+    target: "pino-pretty",
     options: {
       colorize: true,
     },
@@ -39,10 +47,10 @@ const prisma = new PrismaClient();
 // Redis / BullMQ setup (resilient — works without Redis running)
 // ---------------------------------------------------------------------------
 
-const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
+const redisUrl = process.env.REDIS_URL || "redis://localhost:6379";
 const connectionOpts = {
-  host: redisUrl.split('://')[1]?.split(':')[0] || 'localhost',
-  port: parseInt(redisUrl.split(':')[2]) || 6379,
+  host: redisUrl.split("://")[1]?.split(":")[0] || "localhost",
+  port: parseInt(redisUrl.split(":")[2]) || 6379,
 };
 
 /**
@@ -53,15 +61,15 @@ function checkRedisReachable(host: string, port: number, timeoutMs = 2000): Prom
   return new Promise((resolve) => {
     const socket = new net.Socket();
     socket.setTimeout(timeoutMs);
-    socket.on('connect', () => {
+    socket.on("connect", () => {
       socket.destroy();
       resolve(true);
     });
-    socket.on('error', () => {
+    socket.on("error", () => {
       socket.destroy();
       resolve(false);
     });
-    socket.on('timeout', () => {
+    socket.on("timeout", () => {
       socket.destroy();
       resolve(false);
     });
@@ -78,26 +86,26 @@ async function initRedisDeps(): Promise<void> {
 
   if (!available) {
     logger.warn(
-      'Redis unavailable — job queue and submission worker disabled. ' +
-        'Start Docker with: docker compose -f infra/docker-compose.yml up -d',
+      "Redis unavailable — job queue and submission worker disabled. " +
+        "Start Docker with: docker compose -f infra/docker-compose.yml up -d",
     );
     return;
   }
 
   try {
-    submissionQueue = new Queue('submissions', {
+    submissionQueue = new Queue("submissions", {
       connection: connectionOpts,
     });
     await submissionQueue.waitUntilReady();
 
     submissionWorker = createSubmissionWorker(prisma, connectionOpts);
 
-    logger.info('Redis connected — job queue and submission worker enabled');
+    logger.info("Redis connected — job queue and submission worker enabled");
   } catch (err) {
     logger.warn(
       { err },
-      'Failed to initialize BullMQ — job queue and submission worker disabled. ' +
-        'Start Docker with: docker compose -f infra/docker-compose.yml up -d',
+      "Failed to initialize BullMQ — job queue and submission worker disabled. " +
+        "Start Docker with: docker compose -f infra/docker-compose.yml up -d",
     );
     submissionQueue = null;
     submissionWorker = null;
@@ -106,14 +114,22 @@ async function initRedisDeps(): Promise<void> {
 
 // Fire-and-forget: server starts immediately even if Redis init is pending
 initRedisDeps().catch((err) => {
-  logger.error({ err }, 'Unexpected error during Redis initialization');
+  logger.error({ err }, "Unexpected error during Redis initialization");
 });
 
 // tRPC router
 const appRouter = router({
   health: publicProcedure.query(() => {
-    return { status: 'ok', timestamp: new Date() };
+    return { status: "ok", timestamp: new Date() };
   }),
+  auth: authRouter,
+  tracks: tracksRouter,
+  modules: modulesRouter,
+  submissions: submissionsRouter,
+  irs: irsRouter,
+  warRoom: warRoomRouter,
+  profile: profileRouter,
+  judge0: judge0Router,
 });
 
 export type AppRouter = typeof appRouter;
@@ -124,14 +140,14 @@ const httpServer = createServer(app);
 // Socket.io
 const io = new Server(httpServer, {
   cors: {
-    origin: '*',
+    origin: "*",
   },
 });
 
-io.on('connection', (socket) => {
-  logger.info({ socketId: socket.id }, 'Client connected');
-  socket.on('disconnect', () => {
-    logger.info({ socketId: socket.id }, 'Client disconnected');
+io.on("connection", (socket) => {
+  logger.info({ socketId: socket.id }, "Client connected");
+  socket.on("disconnect", () => {
+    logger.info({ socketId: socket.id }, "Client disconnected");
   });
 });
 
@@ -145,16 +161,16 @@ if (process.env.SENTRY_DSN_API) {
 
 // tRPC express middleware
 app.use(
-  '/trpc',
+  "/trpc",
   trpcExpress.createExpressMiddleware({
     router: appRouter,
     createContext: (opts) => createContext(opts, { prisma, logger, io, submissionQueue }),
-  })
+  }),
 );
 
 // Health check endpoint
-app.get('/health', (req, res) => {
-  res.json({ status: 'ok', service: 'api' });
+app.get("/health", (req, res) => {
+  res.json({ status: "ok", service: "api" });
 });
 
 // Sentry handler (errors)
@@ -162,7 +178,7 @@ if (process.env.SENTRY_DSN_API) {
   app.use(Sentry.Handlers.errorHandler());
 }
 
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 3001;
 httpServer.listen(PORT, () => {
   logger.info(`Express API server running on port ${PORT}`);
 });

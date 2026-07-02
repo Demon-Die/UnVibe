@@ -1,7 +1,7 @@
 "use client";
 
 import { create } from "zustand";
-import type { ModulePhase } from "@/lib/mock-data/types";
+import type { ModulePhase } from "@unvibe/types";
 
 interface EditorStore {
   phase: ModulePhase;

@@ -1,7 +1,7 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 
-type BadgeVariant = "default" | "secondary" | "outline" | "success" | "warning";
+type BadgeVariant = "default" | "secondary" | "outline" | "success" | "warning" | "destructive";
 
 const variants: Record<BadgeVariant, string> = {
   default: "border-transparent bg-primary text-primary-foreground",
@@ -9,15 +9,20 @@ const variants: Record<BadgeVariant, string> = {
   outline: "border-border text-foreground",
   success: "border-emerald-500/30 bg-emerald-500/10 text-emerald-400",
   warning: "border-amber-500/30 bg-amber-500/10 text-amber-300",
+  destructive: "border-red-500/30 bg-red-500/10 text-red-400",
 };
 
-export function Badge({ className, variant = "default", ...props }: React.HTMLAttributes<HTMLDivElement> & { variant?: BadgeVariant }) {
+export function Badge({
+  className,
+  variant = "default",
+  ...props
+}: React.HTMLAttributes<HTMLDivElement> & { variant?: BadgeVariant }) {
   return (
     <div
       className={cn(
         "inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-medium",
         variants[variant],
-        className
+        className,
       )}
       {...props}
     />

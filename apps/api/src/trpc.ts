@@ -1,6 +1,6 @@
-import { initTRPC, TRPCError } from '@trpc/server';
-import { ZodError } from 'zod';
-import type { Context, Session } from './context';
+import { initTRPC, TRPCError } from "@trpc/server";
+import { ZodError } from "zod";
+import type { Context, Session } from "./context";
 
 // ---------------------------------------------------------------------------
 // tRPC initialisation — typed against Context so every procedure has full
@@ -12,10 +12,7 @@ export const t = initTRPC.context<Context>().create({
       ...shape,
       data: {
         ...shape.data,
-        zodError:
-          error.cause instanceof ZodError
-            ? error.cause.flatten()
-            : null,
+        zodError: error.cause instanceof ZodError ? error.cause.flatten() : null,
       },
     };
   },
@@ -45,8 +42,8 @@ export const publicProcedure = t.procedure;
 const isAuthenticated = t.middleware(({ ctx, next }) => {
   if (!ctx.session) {
     throw new TRPCError({
-      code: 'UNAUTHORIZED',
-      message: 'You must be signed in to access this resource.',
+      code: "UNAUTHORIZED",
+      message: "You must be signed in to access this resource.",
     });
   }
 

@@ -1,4 +1,4 @@
-import type { LeaderboardEntry } from "@/lib/mock-data/types";
+import type { LeaderboardEntry } from "@unvibe/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
@@ -10,7 +10,10 @@ export function Leaderboard({ entries }: { entries: LeaderboardEntry[] }) {
       </CardHeader>
       <CardContent className="space-y-3">
         {entries.map((entry, index) => (
-          <div key={entry.id} className="flex items-center justify-between rounded-md border border-border bg-background/60 p-3">
+          <div
+            key={entry.id}
+            className="flex items-center justify-between rounded-md border border-border bg-background/60 p-3"
+          >
             <div className="flex items-center gap-3">
               <span className="font-mono text-sm text-muted-foreground">#{index + 1}</span>
               <div>
